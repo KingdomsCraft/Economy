@@ -1,11 +1,16 @@
 <?php
 
 /**
- * MySQLLoadAccountTask.php Class
+ * Kingdoms Craft Economy
  *
- * Created on 13/06/2016 at 7:51 PM
+ * Copyright (C) 2016 Kingdoms Craft
  *
- * @author Jack
+ * This is private software, you cannot redistribute it and/or modify any way
+ * unless otherwise given permission to do so. If you have not been given explicit
+ * permission to view or modify this software you should take the appropriate actions
+ * to remove this software from your device immediately.
+ *
+ * @author JackNoordhuis
  */
 
 

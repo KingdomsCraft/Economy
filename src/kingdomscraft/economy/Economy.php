@@ -1,16 +1,26 @@
 <?php
 
 /**
- * Economy.php Class
+ * Kingdoms Craft Economy
  *
- * Created on 12/06/2016 at 3:13 PM
+ * Copyright (C) 2016 Kingdoms Craft
  *
- * @author Jack
+ * This is private software, you cannot redistribute it and/or modify any way
+ * unless otherwise given permission to do so. If you have not been given explicit
+ * permission to view or modify this software you should take the appropriate actions
+ * to remove this software from your device immediately.
+ *
+ * @author JackNoordhuis
  */
 
 namespace kingdomscraft\economy;
 
+use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
+use kingdomscraft\provider\DummyProvider;
+use kingdomscraft\provider\mysql\MySQLCredentials;
+use kingdomscraft\provider\mysql\MySQLProvider;
+use pocketmine\Player;
 
 class Economy {
 
@@ -20,12 +30,23 @@ class Economy {
 	/** @var Main */
 	private $plugin;
 
+	/** @var DummyProvider */
+	private $provider;
+	
+	/** @var EconomyListener */
+	private $listener;
+
+	/** @var AccountInfo[] */
+	private $infoPool = [];
+
 	/**
 	 * @param Main $plugin
+	 * 
+	 * @return Economy
 	 */
 	public static function enable(Main $plugin) {
-		assert(self::$instance instanceof Economy, "Economy is already enabled!");
-		self::$instance = new self($plugin);
+		assert(!self::$instance instanceof Economy, "Economy is already enabled!");
+		return new self($plugin);
 	}
 
 	/**
@@ -42,6 +63,78 @@ class Economy {
 	 */
 	private function __construct(Main $plugin) {
 		$this->plugin = $plugin;
+		self::$instance = $this;
+		$this->setProvider();
+		$this->setListener();
 	}
+
+	/**
+	 * @return Main
+	 */
+	public function getPlugin() {
+		return $this->plugin;
+	}
+
+	/**
+	 * @return DummyProvider
+	 */
+	public function getProvider() {
+		return $this->provider;
+	}
+
+	/**
+	 * @return EconomyListener
+	 */
+	public function getListener() {
+		return $this->listener;
+	}
+
+	/**
+	 * @param $player
+	 *
+	 * @return AccountInfo
+	 */
+	public function getInfo($player) {
+		if($player instanceof Player) {
+			$player = $player->getName();
+		}
+		return $this->infoPool[$player];
+	}
+
+	/**
+	 * Set the economy provider
+	 */
+	public function setProvider() {
+		$this->provider = new MySQLEconomyProvider($this->plugin, MySQLCredentials::fromArray($this->plugin->settings->getNested("database")));
+	}
+
+	/**
+	 * Set the economy listener
+	 */
+	public function setListener() {
+		$this->listener = new EconomyListener($this);
+	}
+
+	/**
+	 * @param $player
+	 * @param AccountInfo $info
+	 */
+	public function updateInfo($player, AccountInfo $info) {
+		if($player instanceof Player) {
+			$player = $player->getName();
+		}
+		$this->infoPool[$player] = $info;
+	}
+
+	/**
+	 * @param $player
+	 */
+	public function clearInfo($player) {
+		if($player instanceof Player) {
+			$player = $player->getName();
+		}
+		unset($this->infoPool[$player]);
+	}
+	
 
 }

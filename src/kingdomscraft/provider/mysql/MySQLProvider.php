@@ -1,15 +1,21 @@
 <?php
 
 /**
- * MySQLProvider.php Class
+ * Kingdoms Craft Economy
  *
- * Created on 13/06/2016 at 6:19 PM
+ * Copyright (C) 2016 Kingdoms Craft
  *
- * @author Jack
+ * This is private software, you cannot redistribute it and/or modify any way
+ * unless otherwise given permission to do so. If you have not been given explicit
+ * permission to view or modify this software you should take the appropriate actions
+ * to remove this software from your device immediately.
+ *
+ * @author JackNoordhuis
  */
 
 namespace kingdomscraft\provider\mysql;
 
+use kingdomscraft\Main;
 use kingdomscraft\provider\DummyProvider;
 use pocketmine\utils\PluginException;
 use pocketmine\utils\TextFormat;
@@ -17,28 +23,15 @@ use pocketmine\utils\TextFormat;
 /**
  * MySQLProvider class
  */
-class MySQLProvider extends DummyProvider {
+abstract class MySQLProvider extends DummyProvider {
 
 	/** @var MySQLCredentials */
 	protected $credentials;
 
-	public function init() {
-		$this->credentials = MySQLCredentials::fromArray($this->getPlugin()->settings["database"]);
-		$mysqli = $this->credentials->getMysqli();
-		if($mysqli->connect_error) {
-			$mysqli->close();
-			throw new PluginException(TextFormat::RED . "Couldn't connect to database! Error: {$mysqli->connect_error}");
-		}
-		$mysqli->query("CREATE TABLE IF NOT EXISTS kingdomscraft_economy (
-				username VARCHAR(64) PRIMARY KEY DEFAULT '',
-				level INT DEFAULT 1,
-				xp INT DEFAULT 0,
-				gold INT DEFAULT 0,
-				rubies INT DEFAULT 0)");
-		if(isset($mysqli->error) and $mysqli->error) {
-			throw new \RuntimeException($mysqli->error);
-		}
-		$mysqli->close();
+	public function __construct(Main $plugin, MySQLCredentials $credentials) {
+		parent::__construct($plugin);
+		$this->credentials = $credentials;
+		$this->init();
 	}
 
 	/**
@@ -47,17 +40,14 @@ class MySQLProvider extends DummyProvider {
 	public function getCredentials() {
 		return $this->credentials;
 	}
-	
-	public function loadAccount($name) {
-		
-	}
-	
-	public function updateAccount($info, $name) {
-		
-	}
-	
-	public function deleteAccount($name) {
-		
+
+	public function init() {
+		$mysqli = $this->credentials->getMysqli();
+		if($mysqli->connect_error) {
+			$mysqli->close();
+			throw new PluginException(TextFormat::RED . "Couldn't connect to database! Error: {$mysqli->connect_error}");
+		}
+		$mysqli->close();
 	}
 
 }

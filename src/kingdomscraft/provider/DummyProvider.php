@@ -1,11 +1,16 @@
 <?php
 
 /**
- * DummyProvider.php Class
+ * Kingdoms Craft Economy
  *
- * Created on 13/06/2016 at 6:14 PM
+ * Copyright (C) 2016 Kingdoms Craft
  *
- * @author Jack
+ * This is private software, you cannot redistribute it and/or modify any way
+ * unless otherwise given permission to do so. If you have not been given explicit
+ * permission to view or modify this software you should take the appropriate actions
+ * to remove this software from your device immediately.
+ *
+ * @author JackNoordhuis
  */
 
 namespace kingdomscraft\provider;
@@ -16,7 +21,7 @@ use kingdomscraft\Main;
  * DummyProvider class
  */
 abstract class DummyProvider implements Provider {
-	
+
 	/** @var Main */
 	private $plugin;
 
@@ -46,21 +51,29 @@ abstract class DummyProvider implements Provider {
 	 * 
 	 * @param string $name
 	 */
-	public abstract function loadAccount($name);
+	public abstract function load($name);
 
 	/**
-	 * Updates a players save in the database
-	 * 
-	 * @param string $info
-	 * @param string $name
+	 * Display a players info to another player
+	 *
+	 * @param $who
+	 * @param $to
 	 */
-	public abstract function updateAccount($info, $name);
+	public abstract function display($who, $to);
+
+	/**
+	 * Updates a players data in the database
+	 * 
+	 * @param string $name
+	 * @param array $data
+	 */
+	public abstract function update($name, array $data);
 
 	/**
 	 * Deletes a players save from the database
 	 * 
 	 * @param string $name
 	 */
-	public abstract function deleteAccount($name);
+	public abstract function delete($name);
 
 }

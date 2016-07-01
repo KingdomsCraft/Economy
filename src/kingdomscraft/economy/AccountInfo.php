@@ -1,14 +1,19 @@
 <?php
 
 /**
- * AccountInfo.php Class
+ * Kingdoms Craft Economy
  *
- * Created on 13/06/2016 at 6:01 PM
+ * Copyright (C) 2016 Kingdoms Craft
  *
- * @author Jack
+ * This is private software, you cannot redistribute it and/or modify any way
+ * unless otherwise given permission to do so. If you have not been given explicit
+ * permission to view or modify this software you should take the appropriate actions
+ * to remove this software from your device immediately.
+ *
+ * @author JackNoordhuis
  */
 
-namespace kingdomscraft\account;
+namespace kingdomscraft\economy;
 
 use pocketmine\Player;
 
@@ -79,6 +84,8 @@ class AccountInfo {
 	 * Loads an AccountInfo instance from a database row
 	 * 
 	 * @param array $row
+	 * 
+	 * @return AccountInfo
 	 */
 	public static function fromDatabaseRow($row) {
 		$instance = new self;
@@ -87,6 +94,7 @@ class AccountInfo {
 		$instance->xp = $row["xp"];
 		$instance->gold = $row["gold"];
 		$instance->rubies = $row["rubies"];
+		return $instance;
 	}
 
 	/**
@@ -95,7 +103,7 @@ class AccountInfo {
 	public function close() {
 		unset($this->username, $this->level, $this->xp, $this->gold, $this->rubies);
 	}
-	
+
 	public function __destruct() {
 		$this->close();
 	}
