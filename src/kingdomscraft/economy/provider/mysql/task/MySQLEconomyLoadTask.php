@@ -77,6 +77,7 @@ class MySQLEconomyLoadTask extends MySQLTask {
 						$server->getLogger()->debug("Successfully executed MySQLEconomyLoadTask for '{$this->name}'");
 						return;
 					case self::NO_DATA:
+						$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
 						$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as they are not registered to the economy database");
 						return;
 				}

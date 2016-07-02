@@ -25,22 +25,35 @@ use pocketmine\utils\PluginException;
 
 class MySQLEconomyDisplayTask extends MySQLTask {
 
-	/** @var string $who */
+	/** @var string */
 	protected $who;
 
-	/** @var string $to */
+	/** @var string */
 	protected $to;
 
-	/**
+	/** @var string */
+	protected $type;
+
+	/*
+	 * Display types
+	 */
+	const TYPE_VAULT = "display.type.vault";
+	const TYPE_LEVEL_PROGRESS = "display.type.level_progress";
+	const TYPE_TOP_PRESTIGE = "display.type.top_prestige";
+	const TYPE_TOP_GOLD = "display.type.top_gold";
+	const TYPE_TOP_RUBIES = "display.type.top_rubies";
+
+	/*
 	 * Error states
 	 */
 	const NO_DATA = "error.no.data";
 	const DATA_WRONG_FORMAT = "error.wrong.format";
 
-	public function __construct(Economy $economy, $who, $to) {
+	public function __construct(Economy $economy, $who, $to, $type = self::TYPE_VAULT) {
 		parent::__construct($economy->getProvider()->getCredentials());
 		$this->who = strtolower($who);
 		$this->to = strtolower($to);
+		$this->type = $type;
 	}
 
 	public function onRun() {
@@ -54,7 +67,7 @@ class MySQLEconomyDisplayTask extends MySQLTask {
 				$this->setResult($row);
 				return;
 			} else {
-				$this->setResult(self::DATA_WRONG_FORMAT);
+				$this->setResult(self::NO_DATA);
 				return;
 			}
 		} else {
@@ -70,7 +83,24 @@ class MySQLEconomyDisplayTask extends MySQLTask {
 			if($player instanceof Player) {
 				$result = $this->getResult();
 				if(is_array($result)) {
-					$player->sendMessage("{$this->who}'s economy info\nXP: {$result["xp"]}\nLevel: {$result["level"]}\nGold: {$result["gold"]}\nRubies: {$result["rubies"]}");
+					switch($this->type) {
+						default:
+						case self::TYPE_VAULT:
+							$player->sendMessage("{$this->who}'s vault\nXP: {$result["xp"]}\nLevel: {$result["level"]}\nGold: {$result["gold"]}\nRubies: {$result["rubies"]}");
+							break;
+						case self::TYPE_LEVEL_PROGRESS:
+							$player->sendMessage("{$this->who}'s level progress\nXP required for next level: ");
+							break;
+						case self::TYPE_TOP_PRESTIGE:
+							
+							break;
+						case self::TYPE_TOP_GOLD:
+							
+							break;
+						case self::TYPE_TOP_RUBIES:
+							
+							break;
+					}
 					$server->getLogger()->debug("Successfully executed MySQLEconomyDisplayTask for '{$this->to}'");
 					return;
 				}

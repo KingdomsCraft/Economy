@@ -47,7 +47,7 @@ class MySQLEconomyRegisterTask extends MySQLTask {
 		$info->unserialize($this->info);
 		$mysqli = $this->getMysqli();
 		$mysqli->query("INSERT INTO kingdomscraft_economy (username, level, xp, gold, rubies) VALUES
-			('{$this->name}', {(int)$info->level}, {(int)$info->xp}, {(int)$info->gold}, {(int)$info->rubies})");
+			('{$this->name}', {$info->level}, {$info->xp}, {$info->gold}, {$info->rubies})");
 		unset($info);
 		if($mysqli->affected_rows > 0) {
 			$mysqli->close();

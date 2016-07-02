@@ -17,3 +17,6 @@ exp:
     8: 70
     9: 80
     10: 90
+messages:
+  command:
+    in-game: "&cPlease run this command in-game!"
