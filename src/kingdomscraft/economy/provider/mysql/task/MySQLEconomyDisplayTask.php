@@ -12,7 +12,6 @@
  *
  * @author JackNoordhuis
  */
-
 namespace kingdomscraft\economy\provider\mysql\task;
 
 
@@ -24,10 +23,13 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
-class MySQLEconomyLoadTask extends MySQLTask {
+class MySQLEconomyDisplayTask extends MySQLTask {
 
-	/** @var string $name */
-	protected $name;
+	/** @var string $who */
+	protected $who;
+
+	/** @var string $to */
+	protected $to;
 
 	/**
 	 * Error states
@@ -35,9 +37,10 @@ class MySQLEconomyLoadTask extends MySQLTask {
 	const NO_DATA = "error.no.data";
 	const DATA_WRONG_FORMAT = "error.wrong.format";
 
-	public function __construct(Economy $economy, $name) {
+	public function __construct(Economy $economy, $who, $to) {
 		parent::__construct($economy->getProvider()->getCredentials());
-		$this->name = strtolower($name);
+		$this->who = strtolower($who);
+		$this->to = strtolower($to);
 	}
 
 	public function onRun() {
@@ -51,7 +54,7 @@ class MySQLEconomyLoadTask extends MySQLTask {
 				$this->setResult($row);
 				return;
 			} else {
-				$this->setResult(self::NO_DATA);
+				$this->setResult(self::DATA_WRONG_FORMAT);
 				return;
 			}
 		} else {
@@ -63,28 +66,32 @@ class MySQLEconomyLoadTask extends MySQLTask {
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
-			$player = $server->getPlayer($this->name);
+			$player = $server->getPlayer($this->to);
 			if($player instanceof Player) {
 				$result = $this->getResult();
 				if(is_array($result)) {
-					$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::fromDatabaseRow($result));
-					$server->getLogger()->debug("Successfully executed MySQLEconomyLoadTask for '{$this->name}'");
+					$player->sendMessage("{$this->who}'s economy info\nXP: {$result["xp"]}\nLevel: {$result["level"]}\nGold: {$result["gold"]}\nRubies: {$result["rubies"]}");
+					$server->getLogger()->debug("Successfully executed MySQLEconomyDisplayTask for '{$this->to}'");
 					return;
 				}
 				switch($result) {
 					default:
-						$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
-						$server->getLogger()->debug("Successfully executed MySQLEconomyLoadTask for '{$this->name}'");
+						$player->sendMessage("Error displaying {$this->who}'s economy info");
+						$server->getLogger()->debug("Unknown error while MySQLEconomyDisplayTask for '{$this->to}'");
+						return;
+					case self::DATA_WRONG_FORMAT:
+						$server->getLogger()->debug("Failed to execute MySQLEconomyDisplayTask for '{$this->to}' as the data isn't in an array");
 						return;
 					case self::NO_DATA:
-						$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as they are not registered to the economy database");
+						$player->sendMessage("{$this->who} doesn't have any economy info");
+						$server->getLogger()->debug("Successfully executed MySQLEconomyDisplayTask for '{$this->to}'");
 						return;
 				}
 			} else {
-				$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as the player isn't online");
+				$server->getLogger()->debug("Failed to execute MySQLEconomyDisplayTask for '{$this->to}' as the player isn't online");
 			}
 		} else {
-			$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as the Economy plugin isn't loaded");
+			$server->getLogger()->debug("Failed to execute MySQLEconomyDisplayTask for '{$this->to}' as the Economy plugin isn't loaded");
 			throw new PluginException("Economy plugin isn't enabled!");
 		}
 	}

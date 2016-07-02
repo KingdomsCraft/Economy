@@ -15,15 +15,19 @@
 
 namespace kingdomscraft\provider;
 
+use kingdomscraft\economy\AccountInfo;
+
 interface Provider {
 
 	public function init();
+
+	public function register($name, AccountInfo $info);
 
 	public function load($name);
 
 	public function display($who, $to);
 
-	public function update($name, array $data);
+	public function update($name, AccountInfo $info);
 	
 	public function delete($name);
 

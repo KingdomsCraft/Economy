@@ -19,7 +19,6 @@ use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\DummyProvider;
 use kingdomscraft\provider\mysql\MySQLCredentials;
-use kingdomscraft\provider\mysql\MySQLProvider;
 use pocketmine\Player;
 
 class Economy {
@@ -136,5 +135,112 @@ class Economy {
 		unset($this->infoPool[$player]);
 	}
 	
+	/*
+	 * API stuff
+	 */
+
+	/**
+	 * Get a players current XP
+	 * 
+	 * @param Player $player
+	 *
+	 * @return int
+	 */
+	public function getXp(Player $player) {
+		$info = $this->getInfo($player);
+		return $info instanceof AccountInfo ? $info->xp : 0;
+	}
+
+	/**
+	 * Get a players current Level
+	 * 
+	 * @param Player $player
+	 *
+	 * @return int
+	 */
+	public function getLevel(Player $player) {
+		$info = $this->getInfo($player);
+		return $info instanceof AccountInfo ? $info->level : 1;
+	}
+
+	/**
+	 * Get a players current Gold
+	 * 
+	 * @param Player $player
+	 *
+	 * @return int
+	 */
+	public function getGold(Player $player) {
+		$info = $this->getInfo($player);
+		return $info instanceof AccountInfo ? $info->gold : 0;
+	}
+
+	/**
+	 * Get a players current Rubies
+	 * 
+	 * @param Player $player
+	 *
+	 * @return int
+	 */
+	public function getRubies(Player $player) {
+		$info = $this->getInfo($player);
+		return $info instanceof AccountInfo ? $info->rubies : 0;
+	}
+
+	/**
+	 * Set a players XP
+	 * 
+	 * @param Player $player
+	 * @param $xp
+	 */
+	public function setXp(Player $player, $xp) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->xp = $xp;
+			$this->getProvider()->update($player->getName(), $info);
+		}
+	}
+
+	/**
+	 * Set a players level
+	 * 
+	 * @param Player $player
+	 * @param $level
+	 */
+	public function setLevel(Player $player, $level) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->level = $level;
+			$this->getProvider()->update($player->getName(), $info);
+		}
+	}
+
+	/**
+	 * Set a players Gold
+	 * 
+	 * @param Player $player
+	 * @param $gold
+	 */
+	public function setGold(Player $player, $gold) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->gold = $gold;
+			$this->getProvider()->update($player->getName(), $info);
+		}
+	}
+
+	/**
+	 * Set a players rubies
+	 * 
+	 * @param Player $player
+	 * @param $rubies
+	 */
+	public function setRubies(Player $player, $rubies) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->rubies = $rubies;
+			$this->getProvider()->update($player->getName(), $info);
+		}
+	}
 
 }

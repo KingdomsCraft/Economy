@@ -34,6 +34,10 @@ class AccountInfo {
 	/** @var int */
 	public $rubies = 0;
 
+	public static function createInstance() {
+		return new self;
+	}
+
 	/**
 	 * @param string|Player $player
 	 *

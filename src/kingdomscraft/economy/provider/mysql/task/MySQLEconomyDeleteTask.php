@@ -15,7 +15,6 @@
 
 namespace kingdomscraft\economy\provider\mysql\task;
 
-
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\Economy;
 use kingdomscraft\Main;
@@ -24,7 +23,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
-class MySQLEconomyLoadTask extends MySQLTask {
+class MySQLEconomyDeleteTask extends MySQLTask {
 
 	/** @var string $name */
 	protected $name;
@@ -33,7 +32,6 @@ class MySQLEconomyLoadTask extends MySQLTask {
 	 * Error states
 	 */
 	const NO_DATA = "error.no.data";
-	const DATA_WRONG_FORMAT = "error.wrong.format";
 
 	public function __construct(Economy $economy, $name) {
 		parent::__construct($economy->getProvider()->getCredentials());
@@ -42,22 +40,15 @@ class MySQLEconomyLoadTask extends MySQLTask {
 
 	public function onRun() {
 		$mysqli = $this->getMysqli();
-		$result = $mysqli->query("SELECT * FROM kingdomscraft_economy WHERE username = '{$mysqli->escape_string($this->name)}'");
-		if($result instanceof \mysqli_result) {
-			$row = $result->fetch_assoc();
-			$result->free();
+		$mysqli->query("DELETE FROM kingdomscraft_economy WHERE username = '{$mysqli->escape_string($this->name)}'");
+		if($mysqli->affected_rows > 0) {
 			$mysqli->close();
-			if(is_array($row)) {
-				$this->setResult($row);
-				return;
-			} else {
-				$this->setResult(self::NO_DATA);
-				return;
-			}
-		} else {
-			$this->setResult(self::NO_DATA);
+			$this->setResult(true);
 			return;
 		}
+		$mysqli->close();
+		$this->setResult(self::NO_DATA);
+		return;
 	}
 
 	public function onCompletion(Server $server) {
@@ -65,26 +56,20 @@ class MySQLEconomyLoadTask extends MySQLTask {
 		if($plugin instanceof Main and $plugin->isEnabled()) {
 			$player = $server->getPlayer($this->name);
 			if($player instanceof Player) {
-				$result = $this->getResult();
-				if(is_array($result)) {
-					$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::fromDatabaseRow($result));
+				$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
+			}
+			$result = $this->getResult();
+			switch($result) {
+				default:
+				case true:
 					$server->getLogger()->debug("Successfully executed MySQLEconomyLoadTask for '{$this->name}'");
 					return;
-				}
-				switch($result) {
-					default:
-						$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
-						$server->getLogger()->debug("Successfully executed MySQLEconomyLoadTask for '{$this->name}'");
-						return;
-					case self::NO_DATA:
-						$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as they are not registered to the economy database");
-						return;
-				}
-			} else {
-				$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as the player isn't online");
+				case self::NO_DATA:
+					$server->getLogger()->debug("Failed to execute MySQLEconomyDeleteTask for '{$this->name}' as they don't have any data");
+					return;
 			}
 		} else {
-			$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as the Economy plugin isn't loaded");
+			$server->getLogger()->debug("Failed to execute MySQLEconomyDeleteTask for '{$this->name}' as the Economy plugin isn't loaded");
 			throw new PluginException("Economy plugin isn't enabled!");
 		}
 	}

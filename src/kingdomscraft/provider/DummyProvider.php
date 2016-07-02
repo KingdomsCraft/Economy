@@ -15,6 +15,7 @@
 
 namespace kingdomscraft\provider;
 
+use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\Main;
 
 /**
@@ -47,6 +48,14 @@ abstract class DummyProvider implements Provider {
 	public abstract function init();
 
 	/**
+	 * Registers a player to the database
+	 *
+	 * @param string $name
+	 * @param AccountInfo $info
+	 */
+	public abstract function register($name, AccountInfo $info);
+
+	/**
 	 * Loads a players save from the database
 	 * 
 	 * @param string $name
@@ -65,9 +74,9 @@ abstract class DummyProvider implements Provider {
 	 * Updates a players data in the database
 	 * 
 	 * @param string $name
-	 * @param array $data
+	 * @param AccountInfo $info
 	 */
-	public abstract function update($name, array $data);
+	public abstract function update($name, AccountInfo $info);
 
 	/**
 	 * Deletes a players save from the database

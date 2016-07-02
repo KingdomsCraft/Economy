@@ -1,8 +1,8 @@
 name: Economy
 version: 0.0.1_Alpha
+main: \kingdomscraft\Main
 authors:
   - "Jack Noordhuis"
-api: [
+api:
   - 1.0.0
   - 2.0.0
-]

@@ -17,6 +17,7 @@ namespace kingdomscraft\economy;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 
 class EconomyListener implements Listener {
@@ -43,6 +44,13 @@ class EconomyListener implements Listener {
 	}
 	
 	public function onQuit(PlayerQuitEvent $event) {
+		$player = $event->getPlayer();
+		if($this->economy->getInfo($player->getName()) instanceof AccountInfo) {
+			$this->economy->clearInfo($player->getName());
+		}
+	}
+
+	public function onKick(PlayerKickEvent $event) {
 		$player = $event->getPlayer();
 		if($this->economy->getInfo($player->getName()) instanceof AccountInfo) {
 			$this->economy->clearInfo($player->getName());

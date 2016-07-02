@@ -16,6 +16,12 @@
 
 namespace kingdomscraft\economy\provider\mysql;
 
+use kingdomscraft\economy\AccountInfo;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyDeleteTask;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyDisplayTask;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyLoadTask;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyRegisterTask;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyUpdateTask;
 use kingdomscraft\provider\mysql\MySQLCredentials;
 use kingdomscraft\provider\mysql\MySQLProvider;
 use pocketmine\utils\PluginException;
@@ -24,7 +30,7 @@ use pocketmine\utils\TextFormat;
 class MySQLEconomyProvider extends MySQLProvider {
 
 	public function init() {
-		$this->credentials = MySQLCredentials::fromArray($this->getPlugin()->settings["database"]);
+		$this->credentials = MySQLCredentials::fromArray($this->getPlugin()->settings->getNested("database"));
 		$mysqli = $this->credentials->getMysqli();
 		if($mysqli->connect_error) {
 			$mysqli->close();
@@ -42,20 +48,24 @@ class MySQLEconomyProvider extends MySQLProvider {
 		$mysqli->close();
 	}
 
+	public function register($name, AccountInfo $info) {
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyRegisterTask($this->getPlugin()->getEconomy(), $name, $info->serialize()));
+	}
+
 	public function load($name) {
-		
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyLoadTask($this->getPlugin()->getEconomy(), $name));
 	}
 
-	public function display($who, $to) {
-		
+	public function display($who, $to = "") {
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyDisplayTask($this->getPlugin()->getEconomy(), $who, $to));
 	}
 
-	public function update($name, array $data) {
-		
+	public function update($name, AccountInfo $info) {
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyUpdateTask($this->getPlugin()->getEconomy(), $name, $info->serialize()));
 	}
 
 	public function delete($name) {
-		
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyDeleteTask($this->getPlugin()->getEconomy(), $name));
 	}
 
 }
