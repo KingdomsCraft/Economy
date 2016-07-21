@@ -44,7 +44,7 @@ class SetGoldCommandTask extends MySQLTask {
 
 	public function onRun() {
 		$mysqli = $this->getMysqli();
-		$mysqli->query("UPDATE economy SET gold = {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET gold = {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
 		if($mysqli->affected_rows > 0) {
 			$this->setResult(true);
 			return;
@@ -59,9 +59,9 @@ class SetGoldCommandTask extends MySQLTask {
 			if($sender instanceof Player) {
 				$result = $this->getResult();
 				if($result) {
-					$sender->sendMessage("Set {$this->name}'s balance to {$this->amount}!");
+					$sender->sendMessage(Main::translateColors("&aSet &b{$this->name}'s &abalance to &6{$this->amount}&a!"));
 				} else {
-					$sender->sendMessage("Couldn't find any economy data for {$this->name}!");
+					$sender->sendMessage(Main::translateColors("&cCouldn't find any economy data for {$this->name}!"));
 				}
 			}
 		}

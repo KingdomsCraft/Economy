@@ -51,6 +51,7 @@ class MySQLEconomyRegisterTask extends MySQLTask {
 			('{$this->name}', {$info->level}, {$info->xp}, {$info->gold}, {$info->rubies})");
 		unset($info);
 		if($mysqli->affected_rows > 0) {
+			var_dump("YAYAYA");
 			$mysqli->close();
 			$this->setResult(true);
 			return;

@@ -44,14 +44,6 @@ class SetGoldCommand extends EconomyPlayerCommand {
 			$amount = (int) $args[1];
 			if(is_int((int) $args[1])) {
 				$name = $args[0];
-				$target = $this->getPlugin()->getServer()->getPlayer($name);
-				if($target instanceof Player) {
-					if($this->getPlugin()->getEconomy()->setGold($target, $amount)) {
-						$player->sendMessage("Set {$target->getName()}'s gold to {$amount}!");
-						$target->sendMessage("Your gold has been set to {$amount}");
-						return true;
-					}
-				}
 				$player->sendMessage("Attempting to set gold...");
 				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new SetGoldCommandTask($this->getPlugin()->getEconomy()->getProvider(), $name, $amount, $player->getName()));
 				return true;

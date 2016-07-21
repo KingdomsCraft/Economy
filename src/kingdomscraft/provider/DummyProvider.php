@@ -63,14 +63,6 @@ abstract class DummyProvider implements Provider {
 	public abstract function load($name);
 
 	/**
-	 * Display a players info to another player
-	 *
-	 * @param $who
-	 * @param $to
-	 */
-	public abstract function display($who, $to);
-
-	/**
 	 * Updates a players data in the database
 	 * 
 	 * @param string $name

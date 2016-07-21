@@ -35,23 +35,19 @@ class MySQLEconomyProvider extends MySQLProvider {
 	}
 
 	public function register($name, AccountInfo $info) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyRegisterTask($this->getPlugin()->getEconomy(), $name, $info->serialize()));
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyRegisterTask($this, $name, $info->serialize()));
 	}
 
 	public function load($name) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyLoadTask($this->getPlugin()->getEconomy(), $name));
-	}
-
-	public function display($who, $to = "") {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyDisplayTask($this->getPlugin()->getEconomy(), $who, $to));
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyLoadTask($this, $name));
 	}
 
 	public function update($name, AccountInfo $info) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyUpdateTask($this->getPlugin()->getEconomy(), $name, $info->serialize()));
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyUpdateTask($this, $name, $info->serialize()));
 	}
 
 	public function delete($name) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyDeleteTask($this->getPlugin()->getEconomy(), $name));
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyDeleteTask($this, $name));
 	}
 
 }

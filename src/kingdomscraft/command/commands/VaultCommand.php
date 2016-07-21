@@ -16,6 +16,7 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyPlayerCommand;
+use kingdomscraft\command\tasks\ViewVaultCommandTask;
 use kingdomscraft\Main;
 use pocketmine\Player;
 
@@ -27,7 +28,7 @@ class VaultCommand extends EconomyPlayerCommand {
 	 * @param Main $plugin
 	 */
 	public function __construct(Main $plugin) {
-//		$this->setPermission();
+//		$this->setPermission(economy.command.vault);
 		parent::__construct($plugin, "vault", "View your Level XP, Gold and Rubies", "/vault", ["v"]);
 	}
 
@@ -39,12 +40,11 @@ class VaultCommand extends EconomyPlayerCommand {
 	 */
 	public function onRun(Player $player, array $args) {
 		if(isset($args[0])) {
-			$this->getPlugin()->getEconomy()->getProvider()->display($args[0], $player->getName());
-			return true;
-		} else {
-			$this->getPlugin()->getEconomy()->getProvider()->display($player->getName(), $player->getName());
+			$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new ViewVaultCommandTask($this->getPlugin()->getEconomy()->getProvider(), $args[0], $player->getName()));
 			return true;
 		}
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new ViewVaultCommandTask($this->getPlugin()->getEconomy()->getProvider(), $player->getName(), $player->getName()));
+		return true;
 	}
 
 }

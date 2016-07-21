@@ -23,9 +23,13 @@ exp:
 messages:
   command:
     in-game: "&cPlease run this command in-game!"
-    attempt-set-gold: "&6Attempting to set {args1}'s gold..."
+    db-connection-error: "&cUh oh, looks like there was an error connecting to the database!"
     set-gold-success: "&aSet {args1}'s gold to {args2}!"
-    gold-set: "&aYour gold has been set to {args1}!"
+    add-gold-success: "&aGave {args1}'s {args2} gold!"
+    take-gold-success: "&aTook {args1} gold from {args2}"
     attempt-set-rubies: "&6Attempting to set {args1}'s rubies..."
     set-rubies-success: "&aSet {args1}'s rubies to {args2}!"
-    rubies-set: "&aYour rubies have been set to {args1}!"
+    attempt-set-level: "&6Attempting to set {args1}'s level..."
+    set-level-success: "&aSet {args1}'s level to {args2}!"
+    attempt-set-xp: "&6Attempting to set {args1}'s xp..."
+    set-xp-success: "&aSet {args1}'s xp to {args2}!"

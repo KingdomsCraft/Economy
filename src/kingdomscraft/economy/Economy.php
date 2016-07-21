@@ -35,6 +35,9 @@ class Economy {
 	/** @var EconomyListener */
 	private $listener;
 
+	/** @var EconomyUpdateTask */
+	private $updateTask;
+
 	/** @var AccountInfo[] */
 	private $infoPool = [];
 
@@ -65,6 +68,7 @@ class Economy {
 		self::$instance = $this;
 		$this->setProvider();
 		$this->setListener();
+		$this->updateTask = new EconomyUpdateTask($this);
 	}
 
 	/**

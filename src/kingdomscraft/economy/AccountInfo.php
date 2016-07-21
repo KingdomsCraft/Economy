@@ -58,13 +58,14 @@ class AccountInfo {
 	 * @return string
 	 */
 	public function serialize() {
-		return json_encode([
+		$data = json_encode([
 			"username" => $this->username,
 			"level" => $this->level,
 			"xp" => $this->xp,
 			"gold" => $this->gold,
 			"rubies" => $this->rubies
 		]);
+		return $data;
 	}
 
 	/**
@@ -73,7 +74,7 @@ class AccountInfo {
 	 * @param $string
 	 */
 	public function unserialize($string) {
-		$data = json_decode($string);
+		$data = json_decode($string, JSON_OBJECT_AS_ARRAY);
 		try {
 			$this->username = $data["username"];
 			$this->level = $data["level"];

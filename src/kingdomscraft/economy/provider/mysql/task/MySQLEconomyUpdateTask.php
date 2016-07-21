@@ -26,10 +26,10 @@ use pocketmine\utils\PluginException;
 
 class MySQLEconomyUpdateTask extends MySQLTask {
 
-	/** @var string $name */
+	/** @var string */
 	protected $name;
 
-	/** @var string $info */
+	/** @var string */
 	protected $info;
 
 	/**
@@ -54,7 +54,7 @@ class MySQLEconomyUpdateTask extends MySQLTask {
 		$info = AccountInfo::createInstance();
 		$info->unserialize($this->info);
 		$mysqli = $this->getMysqli();
-		$mysqli->query("UPDATE kingdomscraft_economy SET level = {(int)$info->level} xp = {(int)$info->xp} gold = {(int)$info->gold} rubies = {(int)$info->rubie$this->s} WHERE username = '{$mysqli->escape_string($this->name)}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET xp_level = {$info->level}, xp = {$info->xp}, gold = {$info->gold}, rubies = {$info->rubies} WHERE username = '{$mysqli->escape_string($this->name)}'");
 		unset($info);
 		if($mysqli->affected_rows > 0) {
 			$mysqli->close();
