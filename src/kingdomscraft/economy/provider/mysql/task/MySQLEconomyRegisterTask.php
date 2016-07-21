@@ -17,6 +17,7 @@ namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\Economy;
+use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
@@ -36,8 +37,8 @@ class MySQLEconomyRegisterTask extends MySQLTask {
 	 */
 	const NO_DATA = "error.no.data";
 
-	public function __construct(Economy $economy, $name, $info) {
-		parent::__construct($economy->getProvider()->getCredentials());
+	public function __construct(MySQLEconomyProvider $provider, $name, $info) {
+		parent::__construct($provider->getCredentials());
 		$this->name = strtolower($name);
 		$this->info = $info;
 	}
@@ -46,7 +47,7 @@ class MySQLEconomyRegisterTask extends MySQLTask {
 		$info = AccountInfo::createInstance();
 		$info->unserialize($this->info);
 		$mysqli = $this->getMysqli();
-		$mysqli->query("INSERT INTO kingdomscraft_economy (username, level, xp, gold, rubies) VALUES
+		$mysqli->query("INSERT INTO kingdomscraft_economy (username, xp_level, xp, gold, rubies) VALUES
 			('{$this->name}', {$info->level}, {$info->xp}, {$info->gold}, {$info->rubies})");
 		unset($info);
 		if($mysqli->affected_rows > 0) {

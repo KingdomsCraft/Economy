@@ -89,18 +89,6 @@ class Economy {
 	}
 
 	/**
-	 * @param $player
-	 *
-	 * @return AccountInfo
-	 */
-	public function getInfo($player) {
-		if($player instanceof Player) {
-			$player = $player->getName();
-		}
-		return $this->infoPool[$player];
-	}
-
-	/**
 	 * Set the economy provider
 	 */
 	public function setProvider() {
@@ -112,6 +100,18 @@ class Economy {
 	 */
 	public function setListener() {
 		$this->listener = new EconomyListener($this);
+	}
+
+	/**
+	 * @param $player
+	 *
+	 * @return AccountInfo
+	 */
+	public function getInfo($player) {
+		if($player instanceof Player) {
+			$player = $player->getName();
+		}
+		return $this->infoPool[$player];
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Economy {
 	}
 	
 	/*
-	 * API stuff
+	 * Economy API stuff
 	 */
 
 	/**
@@ -188,59 +188,207 @@ class Economy {
 	}
 
 	/**
-	 * Set a players XP
+	 * Give a player xp
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function addXp(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->xp += $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Give a player levels
 	 * 
 	 * @param Player $player
-	 * @param $xp
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function addLevels(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->level += $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Give a player gold
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function addGold(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->gold += $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Give a player rubies
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function addRubies(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->rubies += $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Set a players XP
+	 *
+	 * @param Player $player
+	 * @param int $xp
+	 *
+	 * @return bool
 	 */
 	public function setXp(Player $player, $xp) {
 		$info = $this->getInfo($player);
 		if($info instanceof AccountInfo) {
 			$info->xp = $xp;
-			$this->getProvider()->update($player->getName(), $info);
+			return true;
 		}
+		return false;
 	}
 
 	/**
 	 * Set a players level
 	 * 
 	 * @param Player $player
-	 * @param $level
+	 * @param int $level
+	 *
+	 * @return bool
 	 */
 	public function setLevel(Player $player, $level) {
 		$info = $this->getInfo($player);
 		if($info instanceof AccountInfo) {
 			$info->level = $level;
-			$this->getProvider()->update($player->getName(), $info);
+			return true;
 		}
+		return false;
 	}
 
 	/**
 	 * Set a players Gold
 	 * 
 	 * @param Player $player
-	 * @param $gold
+	 * @param int $gold
+	 *
+	 * @return bool
 	 */
 	public function setGold(Player $player, $gold) {
 		$info = $this->getInfo($player);
 		if($info instanceof AccountInfo) {
 			$info->gold = $gold;
-			$this->getProvider()->update($player->getName(), $info);
+			return true;
 		}
+		return false;
 	}
 
 	/**
 	 * Set a players rubies
 	 * 
 	 * @param Player $player
-	 * @param $rubies
+	 * @param int $rubies
+	 *
+	 * @return bool
 	 */
 	public function setRubies(Player $player, $rubies) {
 		$info = $this->getInfo($player);
 		if($info instanceof AccountInfo) {
 			$info->rubies = $rubies;
-			$this->getProvider()->update($player->getName(), $info);
+			return true;
 		}
+		return false;
+	}
+
+	/**
+	 * Subtract xp from a player
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function removeXp(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->xp -= $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Subtract levels from a player
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function removeLevels(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->level -= $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Subtract gold from a players balance
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function removeGold(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->gold -= $amount;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Subtract rubies from a players balance
+	 *
+	 * @param Player $player
+	 * @param int $amount
+	 *
+	 * @return bool
+	 */
+	public function removeRubies(Player $player, $amount = 1) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$info->rubies -= $amount;
+			return true;
+		}
+		return false;
 	}
 
 }

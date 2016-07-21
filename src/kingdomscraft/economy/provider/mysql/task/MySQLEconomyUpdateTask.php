@@ -17,6 +17,7 @@ namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\Economy;
+use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
@@ -36,8 +37,15 @@ class MySQLEconomyUpdateTask extends MySQLTask {
 	 */
 	const NO_DATA = "error.no.data";
 
-	public function __construct(Economy $economy, $name, $info) {
-		parent::__construct($economy->getProvider()->getCredentials());
+	/**
+	 * MySQLEconomyUpdateTask constructor
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param $name
+	 * @param $info
+	 */
+	public function __construct(MySQLEconomyProvider $provider, $name, $info) {
+		parent::__construct($provider->getCredentials());
 		$this->name = $name;
 		$this->info = $info;
 	}
@@ -71,7 +79,6 @@ class MySQLEconomyUpdateTask extends MySQLTask {
 			}
 			switch($result) {
 				default:
-					$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
 					$server->getLogger()->debug("Successfully executed MySQLEconomyUpdateTask for '{$this->name}'");
 					return;
 				case self::NO_DATA:

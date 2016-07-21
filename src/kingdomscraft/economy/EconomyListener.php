@@ -18,6 +18,7 @@ namespace kingdomscraft\economy;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerKickEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 
 class EconomyListener implements Listener {
@@ -38,21 +39,48 @@ class EconomyListener implements Listener {
 		return $this->economy;
 	}
 
-	public function onJoin(PlayerJoinEvent $event) {
+	/**
+	 * Load a players economy data
+	 * 
+	 * @param PlayerPreLoginEvent $event
+	 * 
+	 * @priority MONITOR
+	 */
+	public function onPreLogin(PlayerPreLoginEvent $event) {
 		$player = $event->getPlayer();
 		$this->economy->getProvider()->load($player->getName());
 	}
-	
+
+	/**
+	 * Update a players economy info when they quit
+	 * 
+	 * @param PlayerQuitEvent $event
+	 * 
+	 * @priority MONITOR
+	 */
 	public function onQuit(PlayerQuitEvent $event) {
 		$player = $event->getPlayer();
-		if($this->economy->getInfo($player->getName()) instanceof AccountInfo) {
+		$name = $player->getName();
+		$info = $this->economy->getInfo($player->getName());
+		if($info instanceof AccountInfo) {
+			$this->economy->getProvider()->update($name, clone $info);
 			$this->economy->clearInfo($player->getName());
 		}
 	}
 
+	/**
+	 * Update a players economy info when they're kicked
+	 * 
+	 * @param PlayerKickEvent $event
+	 * 
+	 * @priority MONITOR
+	 */
 	public function onKick(PlayerKickEvent $event) {
 		$player = $event->getPlayer();
-		if($this->economy->getInfo($player->getName()) instanceof AccountInfo) {
+		$name = $player->getName();
+		$info = $this->economy->getInfo($player->getName());
+		if($info instanceof AccountInfo) {
+			$this->economy->getProvider()->update($name, clone $info);
 			$this->economy->clearInfo($player->getName());
 		}
 	}

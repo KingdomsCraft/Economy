@@ -16,6 +16,7 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyPlayerCommand;
+use kingdomscraft\command\tasks\SetGoldCommandTask;
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\Main;
 use pocketmine\Player;
@@ -28,7 +29,7 @@ class SetGoldCommand extends EconomyPlayerCommand {
 	 * @param Main $plugin
 	 */
 	public function __construct(Main $plugin) {
-//		$this->setPermission();
+//		$this->setPermission("economy.command.setgold");
 		parent::__construct($plugin, "setgold", "Set a players gold", "/setgold {amount}", []);
 	}
 
@@ -39,10 +40,22 @@ class SetGoldCommand extends EconomyPlayerCommand {
 	 * @return bool
 	 */
 	public function onRun(Player $player, array $args) {
-		if(isset($args[0])) {
-			
-			$this->getPlugin()->getEconomy()->getProvider()->update($args[0], AccountInfo::getInstance($args[0]));
-			return true;
+		if(isset($args[1])) {
+			$amount = (int) $args[1];
+			if(is_int((int) $args[1])) {
+				$name = $args[0];
+				$target = $this->getPlugin()->getServer()->getPlayer($name);
+				if($target instanceof Player) {
+					if($this->getPlugin()->getEconomy()->setGold($target, $amount)) {
+						$player->sendMessage("Set {$target->getName()}'s gold to {$amount}!");
+						$target->sendMessage("Your gold has been set to {$amount}");
+						return true;
+					}
+				}
+				$player->sendMessage("Attempting to set gold...");
+				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new SetGoldCommandTask($this->getPlugin()->getEconomy()->getProvider(), $name, $amount, $player->getName()));
+				return true;
+			}
 		} else {
 			$player->sendMessage("Please specify a player!");
 			return true;

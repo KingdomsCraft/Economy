@@ -17,6 +17,7 @@ namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\Economy;
+use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
@@ -33,8 +34,14 @@ class MySQLEconomyDeleteTask extends MySQLTask {
 	 */
 	const NO_DATA = "error.no.data";
 
-	public function __construct(Economy $economy, $name) {
-		parent::__construct($economy->getProvider()->getCredentials());
+	/**
+	 * MySQLEconomyDeleteTask constructor
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param $name
+	 */
+	public function __construct(MySQLEconomyProvider $provider, $name) {
+		parent::__construct($provider->getCredentials());
 		$this->name = strtolower($name);
 	}
 

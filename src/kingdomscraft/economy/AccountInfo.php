@@ -94,7 +94,7 @@ class AccountInfo {
 	public static function fromDatabaseRow($row) {
 		$instance = new self;
 		$instance->username = $row["username"];
-		$instance->level = $row["level"];
+		$instance->level = $row["xp_level"];
 		$instance->xp = $row["xp"];
 		$instance->gold = $row["gold"];
 		$instance->rubies = $row["rubies"];

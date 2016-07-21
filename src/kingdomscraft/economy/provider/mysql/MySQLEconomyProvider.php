@@ -17,6 +17,7 @@
 namespace kingdomscraft\economy\provider\mysql;
 
 use kingdomscraft\economy\AccountInfo;
+use kingdomscraft\economy\provider\mysql\task\MySQLEconomyCheckTask;
 use kingdomscraft\economy\provider\mysql\task\MySQLEconomyDeleteTask;
 use kingdomscraft\economy\provider\mysql\task\MySQLEconomyDisplayTask;
 use kingdomscraft\economy\provider\mysql\task\MySQLEconomyLoadTask;
@@ -30,22 +31,7 @@ use pocketmine\utils\TextFormat;
 class MySQLEconomyProvider extends MySQLProvider {
 
 	public function init() {
-		$this->credentials = MySQLCredentials::fromArray($this->getPlugin()->settings->getNested("database"));
-		$mysqli = $this->credentials->getMysqli();
-		if($mysqli->connect_error) {
-			$mysqli->close();
-			throw new PluginException(TextFormat::RED . "Couldn't connect to economy database! Error: {$mysqli->connect_error}");
-		}
-		$mysqli->query("CREATE TABLE IF NOT EXISTS kingdomscraft_economy (
-				username VARCHAR(64) PRIMARY KEY,
-				level INT DEFAULT 1,
-				xp INT DEFAULT 0,
-				gold INT DEFAULT 0,
-				rubies INT DEFAULT 0)");
-		if(isset($mysqli->error) and $mysqli->error) {
-			throw new \RuntimeException($mysqli->error);
-		}
-		$mysqli->close();
+		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new MySQLEconomyCheckTask($this));
 	}
 
 	public function register($name, AccountInfo $info) {

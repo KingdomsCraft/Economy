@@ -1,4 +1,7 @@
 # Kingdoms Craft Economy plugin - Settings.yml config file
+basic:
+  # Time in seconds between saving all online players economy data
+  save-interval: 120
 database:
   host: "localhost"
   user: "root"
@@ -20,3 +23,9 @@ exp:
 messages:
   command:
     in-game: "&cPlease run this command in-game!"
+    attempt-set-gold: "&6Attempting to set {args1}'s gold..."
+    set-gold-success: "&aSet {args1}'s gold to {args2}!"
+    gold-set: "&aYour gold has been set to {args1}!"
+    attempt-set-rubies: "&6Attempting to set {args1}'s rubies..."
+    set-rubies-success: "&aSet {args1}'s rubies to {args2}!"
+    rubies-set: "&aYour rubies have been set to {args1}!"

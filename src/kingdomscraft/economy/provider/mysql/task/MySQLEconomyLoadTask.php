@@ -18,6 +18,7 @@ namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\Economy;
+use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
@@ -35,8 +36,14 @@ class MySQLEconomyLoadTask extends MySQLTask {
 	const NO_DATA = "error.no.data";
 	const DATA_WRONG_FORMAT = "error.wrong.format";
 
-	public function __construct(Economy $economy, $name) {
-		parent::__construct($economy->getProvider()->getCredentials());
+	/**
+	 * MySQLEconomyLoadTask constructor
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param $name
+	 */
+	public function __construct(MySQLEconomyProvider $provider, $name) {
+		parent::__construct($provider->getCredentials());
 		$this->name = strtolower($name);
 	}
 
@@ -78,7 +85,7 @@ class MySQLEconomyLoadTask extends MySQLTask {
 						return;
 					case self::NO_DATA:
 						$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
-						$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as they are not registered to the economy database");
+						$server->getLogger()->debug("Failed to execute MySQLEconomyLoadTask for '{$this->name}' as they're not registered to the economy database");
 						return;
 				}
 			} else {

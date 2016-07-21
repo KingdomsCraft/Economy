@@ -122,4 +122,8 @@ class Main extends PluginBase {
 		return $string;
 	}
 
+	public static function translateArguments($message, $args = []) {
+		return $message;
+	}
+
 }
