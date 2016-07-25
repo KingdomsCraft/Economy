@@ -19,11 +19,11 @@ use kingdomscraft\command\EconomyCommand;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
 
-class VaultCommand extends EconomyCommand {
+class AddRubiesCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
 //		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "vault", "View a players vault", "/vault {player}", ["v", "bal", "balance", "money", "mymoney", "bank"]);
+		parent::__construct($plugin, "giverubies", "Give rubies to a player", "/giverubies {player} {amount}", []);
 	}
 
 	/**

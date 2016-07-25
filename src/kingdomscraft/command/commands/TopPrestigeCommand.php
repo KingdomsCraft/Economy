@@ -17,13 +17,12 @@ namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
 use kingdomscraft\Main;
-use pocketmine\command\CommandSender;
 
-class VaultCommand extends EconomyCommand {
+class TopPrestigeCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
 //		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "vault", "View a players vault", "/vault {player}", ["v", "bal", "balance", "money", "mymoney", "bank"]);
+		parent::__construct($plugin, "topprestige", "Get a list of the most prestiged players", "/topprestige {page}", []);
 	}
 
 	/**

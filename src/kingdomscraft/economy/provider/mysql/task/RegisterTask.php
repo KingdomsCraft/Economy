@@ -16,27 +16,27 @@
 namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\AccountInfo;
-use kingdomscraft\economy\Economy;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
-use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
-class MySQLEconomyRegisterTask extends MySQLTask {
+class RegisterTask extends MySQLTask {
 
-	/** @var string $name */
+	/** @var string */
 	protected $name;
 
-	/** @var string $info */
+	/** @var string */
 	protected $info;
 
 	/**
-	 * Error states
+	 * RegisterTask constructor.
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param string $name
+	 * @param string $info
 	 */
-	const NO_DATA = "error.no.data";
-
 	public function __construct(MySQLEconomyProvider $provider, $name, $info) {
 		parent::__construct($provider->getCredentials());
 		$this->name = strtolower($name);
@@ -44,46 +44,52 @@ class MySQLEconomyRegisterTask extends MySQLTask {
 	}
 
 	public function onRun() {
+		$mysqli = $this->getMysqli();
+		// Check for connection errors
+		if($this->checkConnection($mysqli)) return;
+		// Load the info
 		$info = AccountInfo::createInstance();
 		$info->unserialize($this->info);
-		$mysqli = $this->getMysqli();
+		// Do the query
 		$mysqli->query("INSERT INTO kingdomscraft_economy (username, xp_level, xp, gold, rubies) VALUES
 			('{$this->name}', {$info->level}, {$info->xp}, {$info->gold}, {$info->rubies})");
 		unset($info);
+		// Check for any random errors
+		if($this->checkError($mysqli)) return;
+		// Handle the query data
 		if($mysqli->affected_rows > 0) {
-			var_dump("YAYAYA");
-			$mysqli->close();
-			$this->setResult(true);
+			$this->setResult(self::SUCCESS);
 			return;
 		}
-		$mysqli->close();
 		$this->setResult(self::NO_DATA);
 		return;
 	}
 
+	/**
+	 * @param Server $server
+	 */
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
-			$player = $server->getPlayer($this->name);
-			if($player instanceof Player) {
-				$info = AccountInfo::createInstance();
-				$info->unserialize($this->info);
-				$plugin->getEconomy()->updateInfo($player->getName(), $info);
-				unset($info);
-			}
 			$result = $this->getResult();
-			switch($result) {
-				default:
-					$plugin->getEconomy()->updateInfo($player->getName(), AccountInfo::getInstance($player));
-					$server->getLogger()->debug("Successfully executed MySQLEconomyRegisterTask for '{$this->name}'");
+			switch((is_array($result) ? $result[0] : $result)) {
+				case self::SUCCESS:
+					$plugin->getLogger()->debug("Successfully completed RegisterTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::CONNECTION_ERROR:
+					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("Connection error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::MYSQLI_ERROR:
+					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("MySQL error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::NO_DATA:
-					$server->getLogger()->debug("Failed to execute MySQLEconomyRegisterTask for '{$this->name}' as the data given wasn't in the correct format");
+					$plugin->getLogger()->debug("Error while creating economy data on kingdomscraft_database for {$this->name}");
 					return;
 			}
 		} else {
-			$server->getLogger()->debug("Failed to execute MySQLEconomyRegisterTask for '{$this->name}' as  as the Economy plugin isn't loaded");
-			throw new PluginException("Economy plugin isn't enabled!");
+			throw new PluginException("Attempted to execute RegisterTask while Economy plugin isn't loaded!");
 		}
 	}
 

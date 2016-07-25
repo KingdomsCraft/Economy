@@ -18,9 +18,16 @@ namespace kingdomscraft\provider\mysql;
 use pocketmine\scheduler\AsyncTask;
 
 abstract class MySQLTask extends AsyncTask {
-	
+
 	/** @var MySQLCredentials */
 	private $credentials;
+
+	/** States */
+	const CONNECTION_ERROR = "state.connection.error";
+	const MYSQLI_ERROR = "state.mysqli.error";
+	const NO_DATA = "state.no.data";
+	const WRONG_FORMAT = "state.wrong.format";
+	const SUCCESS = "state.success";
 
 	/**
 	 * MySQLTask constructor
@@ -36,6 +43,32 @@ abstract class MySQLTask extends AsyncTask {
 	 */
 	public function getMysqli() {
 		return $this->credentials->getMysqli();
+	}
+
+	/**
+	 * @param \mysqli $mysqli
+	 *
+	 * @return bool
+	 */
+	public function checkConnection(\mysqli $mysqli) {
+		if($mysqli->connect_error) {
+			$this->setResult([self::CONNECTION_ERROR, $mysqli->connect_error]);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @param \mysqli $mysqli
+	 *
+	 * @return bool
+	 */
+	public function checkError(\mysqli $mysqli) {
+		if($mysqli->error) {
+			$this->setResult([self::MYSQLI_ERROR, $mysqli->error]);
+			return true;
+		}
+		return false;
 	}
 
 }

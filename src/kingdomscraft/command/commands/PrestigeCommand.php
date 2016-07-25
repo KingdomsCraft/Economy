@@ -15,25 +15,19 @@
 
 namespace kingdomscraft\command\commands;
 
-use kingdomscraft\command\EconomyCommand;
+use kingdomscraft\command\EconomyPlayerCommand;
 use kingdomscraft\Main;
-use pocketmine\command\CommandSender;
+use pocketmine\Player;
 
-class VaultCommand extends EconomyCommand {
+class PrestigeCommand extends EconomyPlayerCommand {
 
 	public function __construct(Main $plugin) {
 //		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "vault", "View a players vault", "/vault {player}", ["v", "bal", "balance", "money", "mymoney", "bank"]);
+		parent::__construct($plugin, "prestige", "Prestige to get rewards!", "/prestige", []);
 	}
 
-	/**
-	 * @param CommandSender $sender
-	 * @param array $args
-	 *
-	 * @return bool
-	 */
-	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+	public function onRun(Player $player, array $args) {
+		// TODO: Implement onRun() method.
 	}
 
 }

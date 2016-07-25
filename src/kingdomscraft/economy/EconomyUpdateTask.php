@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CrazedCraft Network Economy
+ * Kingdoms Craft Economy
  *
- * Copyright (C) 2016 CrazedCraft Network
+ * Copyright (C) 2016 Kingdoms Craft
  *
  * This is private software, you cannot redistribute it and/or modify any way
  * unless otherwise given permission to do so. If you have not been given explicit
@@ -11,10 +11,8 @@
  * to remove this software from your device immediately.
  *
  * @author JackNoordhuis
- *
- * Created on 20/07/2016 at 6:21 PM
- *
  */
+
 namespace kingdomscraft\economy;
 
 use pocketmine\scheduler\PluginTask;

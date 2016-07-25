@@ -79,11 +79,12 @@ class Main extends PluginBase {
 
 	/**
 	 * @param string $nested
+	 * @param array $args
 	 *
 	 * @return string
 	 */
-	public function getMessage($nested) {
-		return self::translateColors($this->settings->getNested("messages.{$nested}", " "));
+	public function getMessage($nested, array $args = []) {
+		return self::translateColors(self::translateArguments($this->settings->getNested("messages.{$nested}", " "), $args));
 	}
 
 	/**
@@ -122,7 +123,16 @@ class Main extends PluginBase {
 		return $string;
 	}
 
+	/**
+	 * @param $message
+	 * @param array $args
+	 *
+	 * @return mixed
+	 */
 	public static function translateArguments($message, $args = []) {
+		foreach($args as $key => $data) {
+			$message = str_replace("{args" . (string)((int)$key + 1) . "}", $data, $message);
+		}
 		return $message;
 	}
 

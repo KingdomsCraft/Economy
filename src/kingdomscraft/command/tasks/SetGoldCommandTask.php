@@ -1,9 +1,9 @@
 <?php
 
 /**
- * CrazedCraft Network Economy
+ * Kingdoms Craft Economy
  *
- * Copyright (C) 2016 CrazedCraft Network
+ * Copyright (C) 2016 Kingdoms Craft
  *
  * This is private software, you cannot redistribute it and/or modify any way
  * unless otherwise given permission to do so. If you have not been given explicit
@@ -11,9 +11,6 @@
  * to remove this software from your device immediately.
  *
  * @author JackNoordhuis
- *
- * Created on 20/07/2016 at 7:33 PM
- *
  */
 
 namespace kingdomscraft\command\tasks;
@@ -35,6 +32,11 @@ class SetGoldCommandTask extends MySQLTask {
 	/** @var string */
 	protected $sender;
 
+	/** Result states */
+	const CONNECTION_ERROR = "result.connection.error";
+	const SUCCESS = "result.success";
+	const NO_DATA = "result.no.data";
+
 	public function __construct(MySQLEconomyProvider $provider, $name, $amount, $sender = "") {
 		parent::__construct($provider->getCredentials());
 		$this->name = strtolower($name);
@@ -42,6 +44,9 @@ class SetGoldCommandTask extends MySQLTask {
 		$this->sender = $sender;
 	}
 
+	/**
+	 * Attempt to set the targets gold
+	 */
 	public function onRun() {
 		$mysqli = $this->getMysqli();
 		$mysqli->query("UPDATE kingdomscraft_economy SET gold = {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
@@ -52,16 +57,25 @@ class SetGoldCommandTask extends MySQLTask {
 		$this->setResult(false);
 	}
 
+	/**
+	 * @param Server $server
+	 */
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
 			$sender = $server->getPlayer($this->sender);
+			$result = $this->getResult();
 			if($sender instanceof Player) {
-				$result = $this->getResult();
 				if($result) {
-					$sender->sendMessage(Main::translateColors("&aSet &b{$this->name}'s &abalance to &6{$this->amount}&a!"));
+					$sender->sendMessage($plugin->getMessage("gold-set-success", [$this->name, $this->amount]));
 				} else {
-					$sender->sendMessage(Main::translateColors("&cCouldn't find any economy data for {$this->name}!"));
+					$sender->sendMessage($plugin->getMessage("no-data", [$this->name]));
+				}
+			} elseif(strtolower($this->sender) === "console") {
+				if($result) {
+					$server->getLogger()->info($plugin->getMessage("gold-set-success", [$this->name, $this->amount]));
+				} else {
+					$server->getLogger()->info($plugin->getMessage("no-data", [$this->name]));
 				}
 			}
 		}

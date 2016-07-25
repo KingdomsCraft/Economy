@@ -15,19 +15,14 @@
 
 namespace kingdomscraft\economy\provider\mysql\task;
 
-use kingdomscraft\economy\Economy;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
-use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
-use MongoDB\Driver\Exception\RuntimeException;
 use pocketmine\Server;
-use pocketmine\utils\PluginException;
-use pocketmine\utils\TextFormat;
 
-class MySQLEconomyCheckTask extends MySQLTask {
+class CheckDatabaseTask extends MySQLTask {
 
 	/**
-	 * MySQLEconomyCheckTask constructor
+	 * LoadTask constructor
 	 *
 	 * @param MySQLEconomyProvider $provider
 	 */
@@ -35,47 +30,53 @@ class MySQLEconomyCheckTask extends MySQLTask {
 		parent::__construct($provider->getCredentials());
 	}
 
-	/**
-	 * Error states
-	 */
-	const CONNECTION_ERROR = "connection.error";
-	const MYSQLI_ERROR = "mysqli.error";
-
 	public function onRun() {
 		$mysqli = $this->getMysqli();
-		if($mysqli->connect_error) {
-			$mysqli->close();
-			$this->setResult([self::CONNECTION_ERROR, $mysqli->connect_error]);
-		}
+		// Check for connection errors
+		if($this->checkConnection($mysqli)) return;
+		// Do the query
 		$mysqli->query("CREATE TABLE IF NOT EXISTS kingdomscraft_economy (
 				username VARCHAR(64) PRIMARY KEY,
 				xp_level INT DEFAULT 1,
 				xp INT DEFAULT 0,
 				gold INT DEFAULT 0,
 				rubies INT DEFAULT 0)");
-		if(isset($mysqli->error) and $mysqli->error) {
-			$this->setResult([self::MYSQLI_ERROR, $mysqli->error]);
+		// Check for any random errors
+		if($this->checkError($mysqli)) return;
+		// Handle the query data
+		if($mysqli->affected_rows > 0) {
+			$this->setResult(self::SUCCESS);
+			return;
 		}
-		$mysqli->close();
+		$this->setResult(self::NO_DATA);
+		return;
 	}
 
+	/**
+	 * @param Server $server
+	 */
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
 			$result = $this->getResult();
 			switch((is_array($result) ? $result[0] : $result)) {
-				default:
-					$server->getLogger()->debug("Successfully completed MySQLEconomyCheckTask for economy database!");
+				case self::SUCCESS:
+					$plugin->getLogger()->debug("Successfully completed RegisterTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
-					$server->getLogger()->debug("Failed to complete MySQLEconomyCheckTask for economy database due to a connection error");
-					throw new \RuntimeException($result[1]);
+					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("Connection error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
+					return;
 				case self::MYSQLI_ERROR:
-					$server->getLogger()->debug("Failed to complete MySQLEconomyCheckTask for economy database due to a mysqli error");
-					throw new \RuntimeException($result[1]);
+					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("MySQL error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::NO_DATA:
+					$plugin->getLogger()->debug("Error while creating economy data on kingdomscraft_database for {$this->name}");
+					return;
 			}
 		} else {
-			throw new PluginException("Economy plugin isn't enabled!");
+			throw new PluginException("Attempted to execute RegisterTask while Economy plugin isn't loaded!");
 		}
 	}
 
