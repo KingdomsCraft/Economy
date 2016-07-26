@@ -45,7 +45,7 @@ class EconomyCommandMap {
 	public function setDefaultCommands() {
 		$this->registerAll([
 			new VaultCommand($this->plugin),
-			new SetGoldCommand(($this->plugin)),
+			new SetGoldCommand($this->plugin),
 		]);
 	}
 

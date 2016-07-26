@@ -16,8 +16,10 @@
 namespace kingdomscraft\economy\provider\mysql\task;
 
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
+use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Server;
+use pocketmine\utils\PluginException;
 
 class CheckDatabaseTask extends MySQLTask {
 
@@ -39,16 +41,13 @@ class CheckDatabaseTask extends MySQLTask {
 				username VARCHAR(64) PRIMARY KEY,
 				xp_level INT DEFAULT 1,
 				xp INT DEFAULT 0,
+				prestige INT DEFAULT 0,
 				gold INT DEFAULT 0,
 				rubies INT DEFAULT 0)");
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;
 		// Handle the query data
-		if($mysqli->affected_rows > 0) {
-			$this->setResult(self::SUCCESS);
-			return;
-		}
-		$this->setResult(self::NO_DATA);
+		$this->setResult(self::SUCCESS);
 		return;
 	}
 
@@ -61,22 +60,19 @@ class CheckDatabaseTask extends MySQLTask {
 			$result = $this->getResult();
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
-					$plugin->getLogger()->debug("Successfully completed RegisterTask on kingdomscraft_economy database for {$this->name}");
+					$plugin->getLogger()->debug("Successfully completed CheckDatabaseTask on kingdomscraft_economy database");
 					return;
 				case self::CONNECTION_ERROR:
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
-					$plugin->getLogger()->debug("Connection error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
+					$plugin->getLogger()->debug("Connection error while executing CheckDatabaseTask on kingdomscraft_economy database");
 					return;
 				case self::MYSQLI_ERROR:
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
-					$plugin->getLogger()->debug("MySQL error while executing RegisterTask on kingdomscraft_economy database for {$this->name}");
-					return;
-				case self::NO_DATA:
-					$plugin->getLogger()->debug("Error while creating economy data on kingdomscraft_database for {$this->name}");
+					$plugin->getLogger()->debug("MySQL error while executing CheckDatabaseTask on kingdomscraft_economy database");
 					return;
 			}
 		} else {
-			throw new PluginException("Attempted to execute RegisterTask while Economy plugin isn't loaded!");
+			throw new PluginException("Attempted to execute CheckDatabaseTask while Economy plugin isn't loaded!");
 		}
 	}
 

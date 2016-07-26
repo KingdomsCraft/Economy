@@ -16,8 +16,10 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
+use kingdomscraft\command\tasks\ViewVaultCommandTask;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
+use pocketmine\Player;
 
 class VaultCommand extends EconomyCommand {
 
@@ -33,7 +35,17 @@ class VaultCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+		if(isset($args[0])) {
+			$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new ViewVaultCommandTask($this->getPlugin()->getEconomy()->getProvider(), $args[0], $sender->getName()));
+			return true;
+		} else {
+			if($sender instanceof Player) {
+				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new ViewVaultCommandTask($this->getPlugin()->getEconomy()->getProvider(), $sender->getName(), $sender->getName()));
+			} else {
+				$sender->sendMessage($this->getPlugin()->getMessage("command.in-game"));
+				return true;
+			}
+		}
 	}
 
 }

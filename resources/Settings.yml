@@ -1,7 +1,5 @@
 # Kingdoms Craft Economy plugin - Settings.yml config file
 basic:
-  # Time in seconds between saving all online players economy data
-  save-interval: 120
 database:
   host: "localhost"
   user: "root"
@@ -25,8 +23,11 @@ messages:
     in-game: "&cPlease run this command in-game!"
     usage: "&cUsage: &6{args1}"
     db-connection-error: "&cUh oh, looks like there was an error connecting to the database!"
-    connot-be-negative: "&cValue cannot be negative!"
+    error: "&cOops, looks like there was an error executing the command!"
+    cannot-be-negative: "&cValue cannot be negative!"
     no-data: "&cCouldn't find any economy data for {args1}!"
+    vault-other: "&e-&6==&e- &a{args1}('s) Vault &e-&6==&e-\n&6Gold: &a{args2}\n&6Rubies: &a{args3}"
+    vault-self: "&e-&6==&e- &aYour Vault &e-&6==&e-\n&6Gold: &a{args1}\n&6Rubies: &a{args2}"
     set-xp-success: "&aSet {args1}'s XP to {args2}!"
     add-xp-success: "&aGave {args1}'s {args2} XP!"
     take-xp-success: "&aTook {args1} XP from {args2}"

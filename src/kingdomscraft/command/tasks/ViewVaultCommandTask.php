@@ -17,63 +17,70 @@ namespace kingdomscraft\command\tasks;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
+use kingdomscraft\economy\provider\mysql\task\LoadTask;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\utils\PluginException;
 
-class ViewVaultCommandTask extends MySQLTask {
-
-	/** @var string */
-	protected $who;
+class ViewVaultCommandTask extends LoadTask {
 
 	/** @var string */
-	protected $to;
+	protected $sender;
 
-	public function __construct(MySQLEconomyProvider $provider, $who, $to) {
-		parent::__construct($provider->getCredentials());
-		$this->who = strtolower($who);
-		$this->to = strtolower($to);
+	/**
+	 * ViewVaultCommandTask constructor
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param $name
+	 * @param $sender
+	 */
+	public function __construct(MySQLEconomyProvider $provider, $name, $sender) {
+		parent::__construct($provider, $name);
+		$this->sender = $sender;
 	}
 
-	public function onRun() {
-		$mysqli = $this->getMysqli();
-		$result = $mysqli->query("SELECT * FROM kingdomscraft_economy WHERE username = '{$mysqli->escape_string($this->who)}'");
-		if($result instanceof \mysqli_result) {
-			$data = $result->fetch_assoc();
-			$result->free();
-			$mysqli->close();
-			if(is_array($data)) {
-				$this->setResult($data);
-				return;
-			}
-		}
-		$mysqli->close();
-		$this->setResult(false);
-		return;
-	}
-
+	/**
+	 * @param Server $server
+	 */
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
-			$sender = $server->getPlayer($this->to);
+			$result = $this->getResult();
+			$notify = false;
+			$sender = $server->getPlayerExact($this->sender);
 			if($sender instanceof Player) {
-				$result = $this->getResult();
-				if(is_array($result)) {
-					$info = AccountInfo::fromDatabaseRow($result);
-					if($this->who === $this->to) {
-						$sender->sendMessage(Main::translateColors("&aYour vault:\n&6Level: &a{$info->level}\n&6XP: &a{$info->xp}\n&6Gold: &a{$info->gold}\n&6Rubies: &a{$info->rubies}"));
-						return;
-					}
-					$sender->sendMessage(Main::translateColors("&a{$this->who}('s) vault:\n&6Level: &a{$info->level}\n&6XP: &a{$info->xp}\n&6Gold: &a{$info->gold}\n&6Rubies: &a{$info->rubies}"));
-				} else {
-					if($this->who === $this->to) {
-						$sender->sendMessage(Main::translateColors("&cCouldn't find any economy data for you!"));
-						return;
-					}
-					$sender->sendMessage(Main::translateColors("&cCouldn't find any economy data for {$this->who}!"));
-				}
+				$notify = true;
 			}
+			switch((is_array($result) ? $result[0] : $result)) {
+				case self::SUCCESS:
+					if($notify) {
+						if(strtolower($this->sender) === $this->name) {
+							$sender->sendMessage($plugin->getMessage("command.vault-self", [$result[1]["gold"], $result[1]["rubies"]]));
+						} else {
+							$sender->sendMessage($plugin->getMessage("command.vault-other", [$this->name, $result[1]["gold"], $result[1]["rubies"]]));
+						}
+					}
+					$plugin->getLogger()->debug("Successfully completed ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::CONNECTION_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("Connection error while executing ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::MYSQLI_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("MySQL error while executing ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::NO_DATA:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
+					$plugin->getLogger()->debug("Couldn't find economy data on kingdomscraft_database for {$this->name}");
+					return;
+			}
+		} else {
+			throw new PluginException("Attempted to execute ViewVaultCommandTask while Economy plugin isn't loaded!");
 		}
 	}
 

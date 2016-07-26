@@ -15,46 +15,30 @@
 
 namespace kingdomscraft\command\tasks;
 
+use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
+use kingdomscraft\economy\provider\mysql\task\SetGoldTask;
 use kingdomscraft\Main;
-use kingdomscraft\provider\mysql\MySQLTask;
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\utils\PluginException;
 
-class SetGoldCommandTask extends MySQLTask {
-
-	/** @var string */
-	protected $name;
-
-	/** @var int */
-	protected $amount;
+class SetGoldCommandTask extends SetGoldTask {
 
 	/** @var string */
 	protected $sender;
 
-	/** Result states */
-	const CONNECTION_ERROR = "result.connection.error";
-	const SUCCESS = "result.success";
-	const NO_DATA = "result.no.data";
-
-	public function __construct(MySQLEconomyProvider $provider, $name, $amount, $sender = "") {
-		parent::__construct($provider->getCredentials());
-		$this->name = strtolower($name);
-		$this->amount = $amount;
-		$this->sender = $sender;
-	}
-
 	/**
-	 * Attempt to set the targets gold
+	 * SetGoldCommandTask constructor
+	 *
+	 * @param MySQLEconomyProvider $provider
+	 * @param $name
+	 * @param $amount
+	 * @param $sender
 	 */
-	public function onRun() {
-		$mysqli = $this->getMysqli();
-		$mysqli->query("UPDATE kingdomscraft_economy SET gold = {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
-		if($mysqli->affected_rows > 0) {
-			$this->setResult(true);
-			return;
-		}
-		$this->setResult(false);
+	public function __construct(MySQLEconomyProvider $provider, $name, $amount, $sender) {
+		parent::__construct($provider, $name, $amount);
+		$this->sender = $sender;
 	}
 
 	/**
@@ -63,21 +47,38 @@ class SetGoldCommandTask extends MySQLTask {
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
-			$sender = $server->getPlayer($this->sender);
 			$result = $this->getResult();
+			$notify = false;
+			$sender = $server->getPlayerExact($this->sender);
 			if($sender instanceof Player) {
-				if($result) {
-					$sender->sendMessage($plugin->getMessage("gold-set-success", [$this->name, $this->amount]));
-				} else {
-					$sender->sendMessage($plugin->getMessage("no-data", [$this->name]));
-				}
-			} elseif(strtolower($this->sender) === "console") {
-				if($result) {
-					$server->getLogger()->info($plugin->getMessage("gold-set-success", [$this->name, $this->amount]));
-				} else {
-					$server->getLogger()->info($plugin->getMessage("no-data", [$this->name]));
-				}
+				$notify = true;
 			}
+			switch((is_array($result) ? $result[0] : $result)) {
+				case self::SUCCESS:
+					$info = $plugin->getEconomy()->getInfo($this->name);
+					if($info instanceof AccountInfo) {
+						$info->gold = $this->amount;
+					}
+					if($notify) $sender->sendMessage($plugin->getMessage("command.set-gold-success", [$this->name, $this->amount]));
+					$plugin->getLogger()->debug("Successfully completed SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::CONNECTION_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("Connection error while executing SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::MYSQLI_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
+					$plugin->getLogger()->debug("MySQL error while executing SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
+					return;
+				case self::NO_DATA:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
+					$plugin->getLogger()->debug("Failed to execute SetGoldCommandTask on kingdomscraft_database for {$this->name} as they don't have any data");
+					return;
+			}
+		} else {
+			throw new PluginException("Attempted to execute SetGoldCommandTask while Economy plugin isn't loaded!");
 		}
 	}
 
