@@ -15,6 +15,7 @@
 
 namespace kingdomscraft\economy\provider\mysql\task;
 
+use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
@@ -68,6 +69,10 @@ class TakeGoldTask extends MySQLTask {
 			$result = $this->getResult();
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
+					$info = $plugin->getEconomy()->getInfo($this->name);
+					if($info instanceof AccountInfo) {
+						$info->gold -= $this->amount;
+					}
 					$plugin->getLogger()->debug("Successfully completed TakeGoldTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:

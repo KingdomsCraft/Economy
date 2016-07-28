@@ -15,6 +15,10 @@
 
 namespace kingdomscraft\command;
 
+use kingdomscraft\command\commands\AddGoldCommand;
+use kingdomscraft\command\commands\AddLevelCommand;
+use kingdomscraft\command\commands\AddRubiesCommand;
+use kingdomscraft\command\commands\AddXpCommand;
 use kingdomscraft\command\commands\SetGoldCommand;
 use kingdomscraft\command\commands\VaultCommand;
 use kingdomscraft\Main;
@@ -44,6 +48,10 @@ class EconomyCommandMap {
 	 */
 	public function setDefaultCommands() {
 		$this->registerAll([
+			new AddGoldCommand($this->plugin),
+			new AddLevelCommand($this->plugin),
+			new AddRubiesCommand($this->plugin),
+			new AddXpCommand($this->plugin),
 			new VaultCommand($this->plugin),
 			new SetGoldCommand($this->plugin),
 		]);

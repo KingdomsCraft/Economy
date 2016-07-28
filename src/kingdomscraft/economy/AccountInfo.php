@@ -72,6 +72,8 @@ class AccountInfo {
 	 * Loads an AccountInfo instance from a json encoded array
 	 * 
 	 * @param $string
+	 *
+	 * @return AccountInfo
 	 */
 	public function unserialize($string) {
 		$data = json_decode($string, JSON_OBJECT_AS_ARRAY);
@@ -83,6 +85,7 @@ class AccountInfo {
 			$this->rubies = $data["rubies"];
 		} catch(\ArrayOutOfBoundsException $e) {
 		}
+		return $this;
 	}
 
 	/**

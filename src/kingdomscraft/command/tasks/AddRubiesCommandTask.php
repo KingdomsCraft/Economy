@@ -13,77 +13,56 @@
  * @author JackNoordhuis
  */
 
-namespace kingdomscraft\economy\provider\mysql\task;
+namespace kingdomscraft\command\tasks;
 
 use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
+use kingdomscraft\economy\provider\mysql\task\AddRubiesTask;
 use kingdomscraft\Main;
-use kingdomscraft\provider\mysql\MySQLTask;
+use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
-class AddRubiesTask extends MySQLTask {
+class AddRubiesCommandTask extends AddRubiesTask {
 
 	/** @var string */
-	protected $name;
+	protected $sender;
 
-	/** @var int */
-	protected $amount;
-
-	/**
-	 * AddRubiesTask constructor
-	 *
-	 * @param MySQLEconomyProvider $provider
-	 * @param $name
-	 * @param $amount
-	 */
-	public function __construct(MySQLEconomyProvider $provider, $name, $amount) {
-		parent::__construct($provider->getCredentials());
-		$this->name = strtolower($name);
-		$this->amount = $amount;
+	public function __construct(MySQLEconomyProvider $provider, $name, $amount, $sender) {
+		parent::__construct($provider, $name, $amount);
+		$this->sender = $sender;
 	}
 
-	public function onRun() {
-		$mysqli = $this->getMysqli();
-		// Check for connection errors
-		if($this->checkConnection($mysqli)) return;
-		// Do the query
-		$mysqli->query("UPDATE kingdomscraft_economy SET rubies = rubies + {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
-		// Check for any random errors
-		if($this->checkError($mysqli)) return;
-		// Handle the query data
-		if($mysqli->affected_rows > 0) {
-			$this->setResult(self::SUCCESS);
-			return;
-		}
-		$this->setResult(self::NO_DATA);
-		return;
-	}
-
-	/**
-	 * @param Server $server
-	 */
 	public function onCompletion(Server $server) {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
 			$result = $this->getResult();
+			$notify = false;
+			$sender = $server->getPlayerExact($this->sender);
+			if($sender instanceof Player) {
+				$notify = true;
+			}
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
 					$info = $plugin->getEconomy()->getInfo($this->name);
 					if($info instanceof AccountInfo) {
 						$info->rubies += $this->amount;
 					}
+					if($notify) $sender->sendMessage($plugin->getMessage("command.add-rubies-success", [$this->name, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed AddRubiesTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing AddRubiesTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::MYSQLI_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing AddRubiesTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::NO_DATA:
+					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
 					$plugin->getLogger()->debug("Failed to execute AddRubiesTask on kingdomscraft_database for {$this->name} as they don't have any data");
 					return;
 			}

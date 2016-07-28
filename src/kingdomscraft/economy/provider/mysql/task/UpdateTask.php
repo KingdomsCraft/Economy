@@ -66,6 +66,8 @@ class UpdateTask extends MySQLTask {
 			$result = $this->getResult();
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
+					$info = AccountInfo::createInstance();
+					$plugin->getEconomy()->updateInfo($this->name, $info->unserialize(AccountInfo::createInstance()));
 					$plugin->getLogger()->debug("Successfully completed UpdateTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
