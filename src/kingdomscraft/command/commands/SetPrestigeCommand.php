@@ -33,7 +33,7 @@ class SetPrestigeCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+		$player->sendMessage(Main::translateColors("&cNot implemented yet!"));
 	}
 
 }

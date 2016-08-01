@@ -103,7 +103,7 @@ class Economy {
 	}
 
 	/**
-	 * @param $player
+	 * @param Player|string $player
 	 *
 	 * @return AccountInfo
 	 */
@@ -115,7 +115,19 @@ class Economy {
 	}
 
 	/**
-	 * @param $player
+	 * @param Player|string $player
+	 *
+	 * @return bool
+	 */
+	public function hasInfo($player) {
+		if($player instanceof Player) {
+			$player = $player->getName();
+		}
+		return isset($this->infoPool[strtolower($player)]);
+	}
+
+	/**
+	 * @param Player|string $player
 	 * @param AccountInfo $info
 	 */
 	public function updateInfo($player, AccountInfo $info) {
@@ -126,7 +138,7 @@ class Economy {
 	}
 
 	/**
-	 * @param $player
+	 * @param Player|string $player
 	 */
 	public function clearInfo($player) {
 		if($player instanceof Player) {

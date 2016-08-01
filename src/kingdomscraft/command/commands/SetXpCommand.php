@@ -16,6 +16,7 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
+use kingdomscraft\command\tasks\SetXpCommandTask;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
 
@@ -33,7 +34,20 @@ class SetXpCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+		if(isset($args[1])) {
+			$name = $args[0];
+			$amount = (int) $args[1];
+			if(is_int($amount) and $amount >= 0) {
+				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new SetXpCommandTask($this->getPlugin()->getEconomy()->getProvider(), $name, $amount, $sender->getName()));
+				return true;
+			} else {
+				$sender->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+				return true;
+			}
+		} else {
+			$sender->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
+			return true;
+		}
 	}
 
 }

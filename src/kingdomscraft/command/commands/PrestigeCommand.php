@@ -27,7 +27,7 @@ class PrestigeCommand extends EconomyPlayerCommand {
 	}
 
 	public function onRun(Player $player, array $args) {
-		// TODO: Implement onRun() method.
+		$player->sendMessage(Main::translateColors("&cNot implemented yet!"));
 	}
 
 }
