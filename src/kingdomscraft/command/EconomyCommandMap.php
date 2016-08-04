@@ -29,6 +29,10 @@ use kingdomscraft\command\commands\TakeGoldCommand;
 use kingdomscraft\command\commands\TakeLevelCommand;
 use kingdomscraft\command\commands\TakeRubiesCommand;
 use kingdomscraft\command\commands\TakeXpCommand;
+use kingdomscraft\command\commands\TopGoldCommand;
+use kingdomscraft\command\commands\TopPrestigeCommand;
+use kingdomscraft\command\commands\TopRubiesCommand;
+use kingdomscraft\command\commands\TopXpCommand;
 use kingdomscraft\command\commands\VaultCommand;
 use kingdomscraft\Main;
 
@@ -71,6 +75,10 @@ class EconomyCommandMap {
 			new TakeLevelCommand($this->plugin),
 			new TakeRubiesCommand($this->plugin),
 			new TakeXpCommand($this->plugin),
+			new TopGoldCommand($this->plugin),
+			new TopPrestigeCommand($this->plugin),
+			new TopRubiesCommand($this->plugin),
+			new TopXpCommand($this->plugin),
 			new VaultCommand($this->plugin)
 		]);
 	}

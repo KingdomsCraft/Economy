@@ -47,6 +47,7 @@ class TakeXpCommand extends EconomyCommand {
 		} else {
 			$sender->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
 			return true;
-		}	}
+		}
+	}
 
 }

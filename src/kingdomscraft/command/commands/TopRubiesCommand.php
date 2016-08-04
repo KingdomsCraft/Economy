@@ -16,6 +16,7 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
+use kingdomscraft\command\tasks\TopRubiesCommandTask;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
 
@@ -33,7 +34,18 @@ class TopRubiesCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+		if(isset($args[0])) {
+			$page = (int)$args[0];
+		} else {
+			$page = 1;
+		}
+		if(is_int($page) and $page >= 0) {
+			$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new TopRubiesCommandTask($this->getPlugin()->getEconomy()->getProvider(), $sender->getName(), $page));
+			return true;
+		} else {
+			$sender->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+			return true;
+		}
 	}
 
 }

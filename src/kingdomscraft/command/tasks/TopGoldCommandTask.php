@@ -13,50 +13,50 @@
  * @author JackNoordhuis
  */
 
-namespace kingdomscraft\economy\provider\mysql\task;
+namespace kingdomscraft\command\tasks;
 
-use kingdomscraft\economy\AccountInfo;
+
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
+use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
-class AddGoldTask extends MySQLTask {
+class TopGoldCommandTask extends MySQLTask {
 
 	/** @var string */
-	protected $name;
+	protected $sender;
 
 	/** @var int */
-	protected $amount;
+	protected $page;
 
 	/**
-	 * AddGoldTask constructor
+	 * TopGoldCommandTask constructor
 	 *
 	 * @param MySQLEconomyProvider $provider
-	 * @param $name
-	 * @param $amount
+	 * @param $sender
+	 * @param $page
 	 */
-	public function __construct(MySQLEconomyProvider $provider, $name, $amount) {
+	public function __construct(MySQLEconomyProvider $provider, $sender, $page) {
 		parent::__construct($provider->getCredentials());
-		parent::__construct($provider->getCredentials());
-		$this->name = strtolower($name);
-		$this->amount = $amount;
+		$this->sender = $sender;
+		$this->page;
 	}
 
 	public function onRun() {
 		$mysqli = $this->getMysqli();
-		// Check for connection errors
 		if($this->checkConnection($mysqli)) return;
-		// Do the query
-		$mysqli->query("UPDATE kingdomscraft_economy SET gold = gold + {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
-		// Check for any random errors
+		$result = $mysqli->query("SELECT username, gold FROM kingdomscraft_economy ORDER BY gold DESC LIMIT 5");
 		if($this->checkError($mysqli)) return;
-		// Handle the query data
-		if($mysqli->affected_rows > 0) {
-			$this->setResult(self::SUCCESS);
+		if($result instanceof \mysqli_result) {
+			$data = $result->fetch_all();
+			$result->free();
+			$mysqli->close();
+			$this->setResult([self::SUCCESS, $data]);
 			return;
 		}
+		$mysqli->close();
 		$this->setResult(self::NO_DATA);
 		return;
 	}
@@ -68,28 +68,37 @@ class AddGoldTask extends MySQLTask {
 		$plugin = $server->getPluginManager()->getPlugin("Economy");
 		if($plugin instanceof Main and $plugin->isEnabled()) {
 			$result = $this->getResult();
+			$notify = false;
+			$sender = $server->getPlayerExact($this->sender);
+			if($sender instanceof Player) {
+				$notify = true;
+			}
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
-					$info = $plugin->getEconomy()->getInfo($this->name);
-					if($info instanceof AccountInfo) {
-						$info->gold += $this->amount;
+//					var_dump($result[1]);
+					$message = "";
+					$rank = 1;
+					foreach($result[1] as $data) {
+						$message .= $plugin->getMessage("command.top-gold-format", [$rank++, $data[0], $data[1]]) . "\n";
 					}
-					$plugin->getLogger()->debug("Successfully completed AddGoldTask on kingdomscraft_economy database for {$this->name}");
+//					var_dump($message);
+					if($notify) $sender->sendMessage($plugin->getMessage("command.top-gold-success", [$message]));
+					$plugin->getLogger()->debug("Successfully completed TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::CONNECTION_ERROR:
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
-					$plugin->getLogger()->debug("Connection error while executing AddGoldTask on kingdomscraft_economy database for {$this->name}");
+					$plugin->getLogger()->debug("Connection error while executing TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::MYSQLI_ERROR:
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
-					$plugin->getLogger()->debug("MySQL error while executing AddGoldTask on kingdomscraft_economy database for {$this->name}");
+					$plugin->getLogger()->debug("MySQL error while executing TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::NO_DATA:
-					$plugin->getLogger()->debug("Failed to execute AddGoldTask on kingdomscraft_database for {$this->name} as they don't have any data");
+					$plugin->getLogger()->debug("Failed to execute TopGoldTask on kingdomscraft_database as the database doesn't exist!");
 					return;
 			}
 		} else {
-			throw new PluginException("Attempted to execute AddGoldTask while Economy plugin isn't loaded!");
+			throw new PluginException("Attempted to execute TopGoldTask while Economy plugin isn't loaded!");
 		}
 	}
 

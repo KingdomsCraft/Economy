@@ -33,12 +33,21 @@ messages:
     set-xp-success: "&aSet {args1}('s) XP to {args2}!"
     add-xp-success: "&aGave {args1}('s) {args2} XP!"
     take-xp-success: "&aTook {args1} XP from {args2}"
+    # #1 - jack with 344 XP
+    top-xp-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &aXP&r"
+    top-xp-success: "&e-&6==&e- Top XP &e-&6==&e-\n{args1}"
     set-level-success: "&aSet {args1}('s) level to {args2}!"
     add-level-success: "&aGave {args1}('s) {args2} levels!"
     take-level-success: "&aTook {args1} levels from {args2}"
     set-gold-success: "&aSet {args1}('s) gold to {args2}!"
     add-gold-success: "&aGave {args1}('s) {args2} gold!"
     take-gold-success: "&aTook {args1} gold from {args2}"
+    # #1 - jack with 344 gold
+    top-gold-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &agold&r"
+    top-gold-success: "&e-&6==&e- Top gold &e-&6==&e-\n{args1}"
     set-rubies-success: "&aSet {args1}('s) rubies to {args2}!"
     add-rubies-success: "&aGave {args1}('s) {args2} rubies!"
     take-rubies-success: "&aTook {args1} rubies from {args2}"
+    # #1 - jack with 344 rubies
+    top-rubies-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &arubies&r"
+    top-rubies-success: "&e-&6==&e- Top rubies &e-&6==&e-\n{args1}"

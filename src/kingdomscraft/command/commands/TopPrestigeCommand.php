@@ -17,6 +17,7 @@ namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
 use kingdomscraft\Main;
+use pocketmine\command\CommandSender;
 
 class TopPrestigeCommand extends EconomyCommand {
 
@@ -32,7 +33,7 @@ class TopPrestigeCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		// TODO: Implement run() method.
+		$sender->sendMessage(Main::translateColors("&cNot implemented yet!"));
 	}
 
 }
