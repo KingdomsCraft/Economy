@@ -78,6 +78,13 @@ class Main extends PluginBase {
 	}
 
 	/**
+	 * @return Config
+	 */
+	public function getSettings() {
+		return $this->settings;
+	}
+
+	/**
 	 * @param string $nested
 	 * @param array $args
 	 *
@@ -134,6 +141,12 @@ class Main extends PluginBase {
 			$message = str_replace("{args" . (string)((int)$key + 1) . "}", $data, $message);
 		}
 		return $message;
+	}
+
+	public function getLevelForXp($xp) {
+		foreach($this->settings->getNested("xp.levels") as $levels) {
+			// TODO
+		}
 	}
 
 }

@@ -24,7 +24,7 @@ class AddXpCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
 //		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "givexp", "Give XP to a player", "/givexp {player} {amount}", []);
+		parent::__construct($plugin, "addxp", "Give XP to a player", "/givexp {player} {amount}", []);
 	}
 
 	/**

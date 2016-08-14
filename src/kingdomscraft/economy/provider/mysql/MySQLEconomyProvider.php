@@ -93,16 +93,6 @@ class MySQLEconomyProvider extends MySQLProvider {
 	}
 
 	/**
-	 * Add levels to a players balance
-	 *
-	 * @param string $name
-	 * @param int $amount
-	 */
-	public function addLevel($name, $amount = 1) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new AddLevelTask($this, $name, $amount));
-	}
-
-	/**
 	 * Add rubies to a players balance
 	 *
 	 * @param string $name
@@ -133,16 +123,6 @@ class MySQLEconomyProvider extends MySQLProvider {
 	}
 
 	/**
-	 * Set a players level
-	 *
-	 * @param string $name
-	 * @param int $amount
-	 */
-	public function setLevel($name, $amount = 1) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new SetLevelTask($this, $name, $amount));
-	}
-
-	/**
 	 * Set a players rubies
 	 *
 	 * @param string $name
@@ -170,16 +150,6 @@ class MySQLEconomyProvider extends MySQLProvider {
 	 */
 	public function takeGold($name, $amount = 1) {
 		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new TakeGoldTask($this, $name, $amount));
-	}
-
-	/**
-	 * Take levels from a player
-	 *
-	 * @param string $name
-	 * @param int $amount
-	 */
-	public function takeLevel($name, $amount = 1) {
-		$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new TakeLevelTask($this, $name, $amount));
 	}
 
 	/**

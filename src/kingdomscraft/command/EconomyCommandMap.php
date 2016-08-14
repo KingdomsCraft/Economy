@@ -25,6 +25,7 @@ use kingdomscraft\command\commands\SetGoldCommand;
 use kingdomscraft\command\commands\SetLevelCommand;
 use kingdomscraft\command\commands\SetRubiesCommand;
 use kingdomscraft\command\commands\SetXpCommand;
+use kingdomscraft\command\commands\SilentTellCommand;
 use kingdomscraft\command\commands\TakeGoldCommand;
 use kingdomscraft\command\commands\TakeLevelCommand;
 use kingdomscraft\command\commands\TakeRubiesCommand;
@@ -62,21 +63,17 @@ class EconomyCommandMap {
 	public function setDefaultCommands() {
 		$this->registerAll([
 			new AddGoldCommand($this->plugin),
-			new AddLevelCommand($this->plugin),
 			new AddRubiesCommand($this->plugin),
 			new AddXpCommand($this->plugin),
 			new PayCommand($this->plugin),
-			new PrestigeCommand($this->plugin),
 			new SetGoldCommand($this->plugin),
-			new SetLevelCommand($this->plugin),
 			new SetRubiesCommand($this->plugin),
 			new SetXpCommand($this->plugin),
+			new SilentTellCommand($this->plugin),
 			new TakeGoldCommand($this->plugin),
-			new TakeLevelCommand($this->plugin),
 			new TakeRubiesCommand($this->plugin),
 			new TakeXpCommand($this->plugin),
 			new TopGoldCommand($this->plugin),
-			new TopPrestigeCommand($this->plugin),
 			new TopRubiesCommand($this->plugin),
 			new TopXpCommand($this->plugin),
 			new VaultCommand($this->plugin)

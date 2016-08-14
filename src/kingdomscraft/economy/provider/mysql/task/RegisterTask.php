@@ -51,8 +51,8 @@ class RegisterTask extends MySQLTask {
 		$info = AccountInfo::createInstance();
 		$info->unserialize($this->info);
 		// Do the query
-		$mysqli->query("INSERT INTO kingdomscraft_economy (username, xp_level, xp, gold, rubies) VALUES
-			('{$this->name}', {$info->level}, {$info->xp}, {$info->gold}, {$info->rubies})");
+		$mysqli->query("INSERT INTO kingdomscraft_economy (username, xp, gold, rubies) VALUES
+			('{$this->name}', {$info->xp}, {$info->gold}, {$info->rubies})");
 		unset($info);
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;

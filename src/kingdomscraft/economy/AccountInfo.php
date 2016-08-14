@@ -23,9 +23,6 @@ class AccountInfo {
 	public $username = "";
 
 	/** @var int */
-	public $level = 1;
-
-	/** @var int */
 	public $xp = 0;
 
 	/** @var int */
@@ -60,7 +57,6 @@ class AccountInfo {
 	public function serialize() {
 		$data = json_encode([
 			"username" => $this->username,
-			"level" => $this->level,
 			"xp" => $this->xp,
 			"gold" => $this->gold,
 			"rubies" => $this->rubies
@@ -79,7 +75,6 @@ class AccountInfo {
 		$data = json_decode($string, JSON_OBJECT_AS_ARRAY);
 		try {
 			$this->username = $data["username"];
-			$this->level = $data["level"];
 			$this->xp = $data["xp"];
 			$this->gold = $data["gold"];
 			$this->rubies = $data["rubies"];
@@ -109,7 +104,7 @@ class AccountInfo {
 	 * Dump the info
 	 */
 	public function close() {
-		unset($this->username, $this->level, $this->xp, $this->gold, $this->rubies);
+		unset($this->username, $this->xp, $this->gold, $this->rubies);
 	}
 
 	public function __destruct() {

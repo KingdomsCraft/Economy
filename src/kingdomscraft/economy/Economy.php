@@ -172,7 +172,7 @@ class Economy {
 	 */
 	public function getLevel(Player $player) {
 		$info = $this->getInfo($player);
-		return $info instanceof AccountInfo ? $info->level : 1;
+		return $info instanceof AccountInfo ? $this->plugin : 1;
 	}
 
 	/**
@@ -211,20 +211,6 @@ class Economy {
 		if($player instanceof Player)
 			$player = $player->getName();
 		$this->provider->addXp($player, $amount);
-	}
-
-	/**
-	 * Give a player levels
-	 * 
-	 * @param Player|string $player
-	 * @param int $amount
-	 *
-	 * @return bool
-	 */
-	public function addLevels($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
-		$this->provider->addLevel($player, $amount);
 	}
 
 	/**
@@ -270,22 +256,8 @@ class Economy {
 	}
 
 	/**
-	 * Set a players level
-	 * 
-	 * @param Player|string $player
-	 * @param int $amount
-	 *
-	 * @return bool
-	 */
-	public function setLevel($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
-		$this->provider->setLevel($player, $amount);
-	}
-
-	/**
 	 * Set a players Gold
-	 * 
+	 *
 	 * @param Player|string $player
 	 * @param int $amount
 	 */
@@ -319,20 +291,6 @@ class Economy {
 		if($player instanceof Player)
 			$player = $player->getName();
 		$this->provider->takeXp($player, $amount);
-	}
-
-	/**
-	 * Subtract levels from a player
-	 *
-	 * @param Player|string $player
-	 * @param int $amount
-	 *
-	 * @return bool
-	 */
-	public function removeLevels($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
-		$this->provider->takeLevel($player, $amount);
 	}
 
 	/**

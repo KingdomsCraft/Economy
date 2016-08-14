@@ -12,18 +12,17 @@
  *
  * @author JackNoordhuis
  */
-
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
 
-class TopPrestigeCommand extends EconomyCommand {
+class CheckLevelCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
 //		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "topprestige", "Get a list of the most prestiged players", "/topprestige {page}", []);
+		parent::__construct($plugin, "addxp", "Give XP to a player", "/givexp {player} {amount}", []);
 	}
 
 	/**
@@ -33,7 +32,20 @@ class TopPrestigeCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		$sender->sendMessage(Main::translateColors("&cNot implemented yet!"));
+		if(isset($args[1])) {
+			$name = $args[0];
+			$amount = (int) $args[1];
+			if(is_int($amount) and $amount >= 0) {
+				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new AddXpCommandTask($this->getPlugin()->getEconomy()->getProvider(), $name, $amount, $sender->getName()));
+				return true;
+			} else {
+				$sender->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+				return true;
+			}
+		} else {
+			$sender->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
+			return true;
+		}
 	}
 
 }

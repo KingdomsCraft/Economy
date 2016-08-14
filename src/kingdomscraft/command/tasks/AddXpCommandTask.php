@@ -19,6 +19,7 @@ use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\economy\provider\mysql\task\AddXpTask;
 use kingdomscraft\Main;
+use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 

@@ -39,11 +39,10 @@ class CheckDatabaseTask extends MySQLTask {
 		// Do the query
 		$mysqli->query("CREATE TABLE IF NOT EXISTS kingdomscraft_economy (
 				username VARCHAR(64) PRIMARY KEY,
-				xp_level INT DEFAULT 1,
 				xp INT DEFAULT 0,
 				prestige INT DEFAULT 0,
 				gold INT DEFAULT 0,
-				rubies INT DEFAULT 0)");
+				rubies INT DEFAULT 10)");
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;
 		// Handle the query data
