@@ -75,6 +75,7 @@ class TakeXpTask extends MySQLTask {
 					$info = $plugin->getEconomy()->getInfo($this->name);
 					if($info instanceof AccountInfo) {
 						$info->xp -= $this->amount;
+						$info->cachedLevel = $plugin->getEconomy()->getLevelWithInfo($info);
 					}
 					$plugin->getLogger()->debug("Successfully completed TakeXpTask on kingdomscraft_economy database for {$this->name}");
 					return;

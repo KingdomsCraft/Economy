@@ -23,8 +23,8 @@ use pocketmine\command\CommandSender;
 class TopRubiesCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
 		parent::__construct($plugin, "toprubies", "Get a list of the players with the most rubies", "/toprubies {page}", []);
+		$this->setPermission("economy.command.toprubies");
 	}
 
 	/**

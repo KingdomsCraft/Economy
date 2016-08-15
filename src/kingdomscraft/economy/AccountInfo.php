@@ -31,6 +31,9 @@ class AccountInfo {
 	/** @var int */
 	public $rubies = 0;
 
+	/** @var int */
+	public $cachedLevel = 1;
+
 	public static function createInstance() {
 		return new self;
 	}
@@ -59,7 +62,8 @@ class AccountInfo {
 			"username" => $this->username,
 			"xp" => $this->xp,
 			"gold" => $this->gold,
-			"rubies" => $this->rubies
+			"rubies" => $this->rubies,
+			"cachedLevel" => $this->cachedLevel
 		]);
 		return $data;
 	}
@@ -78,6 +82,7 @@ class AccountInfo {
 			$this->xp = $data["xp"];
 			$this->gold = $data["gold"];
 			$this->rubies = $data["rubies"];
+			$this->cachedLevel = $data["cachedLevel"];
 		} catch(\ArrayOutOfBoundsException $e) {
 		}
 		return $this;
@@ -93,7 +98,6 @@ class AccountInfo {
 	public static function fromDatabaseRow($row) {
 		$instance = new self;
 		$instance->username = $row["username"];
-		$instance->level = $row["xp_level"];
 		$instance->xp = $row["xp"];
 		$instance->gold = $row["gold"];
 		$instance->rubies = $row["rubies"];
@@ -104,7 +108,7 @@ class AccountInfo {
 	 * Dump the info
 	 */
 	public function close() {
-		unset($this->username, $this->xp, $this->gold, $this->rubies);
+		unset($this->username, $this->xp, $this->gold, $this->rubies, $this->cachedLevel);
 	}
 
 	public function __destruct() {

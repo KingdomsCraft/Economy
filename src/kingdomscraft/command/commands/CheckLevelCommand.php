@@ -15,14 +15,16 @@
 namespace kingdomscraft\command\commands;
 
 use kingdomscraft\command\EconomyCommand;
+use kingdomscraft\command\tasks\CheckLevelCommandTask;
 use kingdomscraft\Main;
 use pocketmine\command\CommandSender;
+use pocketmine\Player;
 
 class CheckLevelCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "addxp", "Give XP to a player", "/givexp {player} {amount}", []);
+		parent::__construct($plugin, "checklevel", "Check a players level", "/checklevel {player}", ["level", "checkxp", "nextlevel"]);
+		$this->setPermission("economy.command.checklevel");
 	}
 
 	/**
@@ -32,19 +34,17 @@ class CheckLevelCommand extends EconomyCommand {
 	 * @return bool
 	 */
 	public function run(CommandSender $sender, array $args) {
-		if(isset($args[1])) {
-			$name = $args[0];
-			$amount = (int) $args[1];
-			if(is_int($amount) and $amount >= 0) {
-				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new AddXpCommandTask($this->getPlugin()->getEconomy()->getProvider(), $name, $amount, $sender->getName()));
+		if(isset($args[0])) {
+			$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new CheckLevelCommandTask($this->getPlugin()->getEconomy()->getProvider(), $args[0], $sender->getName()));
+			return true;
+		} else {
+			if($sender instanceof Player) {
+				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new CheckLevelCommandTask($this->getPlugin()->getEconomy()->getProvider(), $sender->getName(), $sender->getName()));
 				return true;
 			} else {
-				$sender->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+				$sender->sendMessage($this->getPlugin()->getMessage("command.in-game"));
 				return true;
 			}
-		} else {
-			$sender->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
-			return true;
 		}
 	}
 

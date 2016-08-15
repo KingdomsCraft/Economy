@@ -23,8 +23,8 @@ use pocketmine\Player;
 class PayCommand extends EconomyPlayerCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
 		parent::__construct($plugin, "pay", "Pay a player some gold", "/pay {player} {amount}", []);
+		$this->setPermission("economy.command.pay");
 	}
 
 	public function onRun(Player $player, array $args) {

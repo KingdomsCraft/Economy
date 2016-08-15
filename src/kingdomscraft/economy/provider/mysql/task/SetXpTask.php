@@ -73,6 +73,10 @@ class SetXpTask extends MySQLTask {
 					if($info instanceof AccountInfo) {
 						$info->xp = $this->amount;
 					}
+					$player = $server->getPlayer($this->name);
+					if($player instanceof Player) {
+						$plugin->getEconomy()->checkLevel($player);
+					}
 					$plugin->getLogger()->debug("Successfully completed SetXpTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:

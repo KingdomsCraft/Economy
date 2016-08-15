@@ -77,7 +77,9 @@ class LoadTask extends MySQLTask {
 				case self::SUCCESS:
 					$player = $server->getPlayerExact($this->name);
 					if($player instanceof Player) {
-						$plugin->getEconomy()->updateInfo($player, AccountInfo::fromDatabaseRow($result[1]));
+						$info = AccountInfo::fromDatabaseRow($result[1]);
+						$info->cachedLevel = $plugin->getEconomy()->getLevelWithXp($result[1]["xp"]);
+						$plugin->getEconomy()->updateInfo($player, $info);
 						$plugin->getLogger()->debug("Successfully completed LoadTask on kingdomscraft_economy database for {$this->name}");
 					} else {
 						$plugin->getLogger()->debug("Couldn't complete LoadTask due to player not being online on kingdomscraft_economy database for {$this->name}");

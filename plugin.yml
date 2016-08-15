@@ -7,4 +7,60 @@ api:
   - 1.0.0
   - 2.0.0
 
-# permissions:
+permissions:
+  economy:
+    description: "Master economy permission node"
+    default: op
+    children:
+      economy.command:
+        description: "Master economy command permission node"
+        default: op
+        children:
+          economy.command.addgold:
+            description: "AddGold command permission node"
+            default: op
+          economy.command.addrubies:
+            description: "AddRubies command permission node"
+            default: op
+          economy.command.addxp:
+            description: "AddXP command permission node"
+            default: op
+          economy.command.checklevel:
+            description: "CheckLevel command permission node"
+            default: true
+          economy.command.pay:
+            description: "Pay command permission node"
+            default: true
+          economy.command.setgold:
+            description: "SetGold command permission node"
+            default: op
+          economy.command.setrubies:
+            description: "SetRubies command permission node"
+            default: op
+          economy.command.setxp:
+            description: "SetXP command permission node"
+            default: op
+          economy.command.silentell:
+            description: "SilentTell command permission node"
+            default: op
+          economy.command.takegold:
+            description: "TakeGold command permission node"
+            default: op
+          economy.command.takerubies:
+            description: "TakeRubies command permission node"
+            default: op
+          economy.command.takexp:
+            description: "TakeXP command permission node"
+            default: op
+          economy.command.topgold:
+            description: "TopGold command permission node"
+            default: true
+          economy.command.toprubies:
+            description: "TopRubies command permission node"
+            default: true
+          economy.command.topxp:
+            description: "TopXP command permission node"
+            default: true
+          economy.command.vault:
+            description: "Vault command permission node"
+            default: true

@@ -19,6 +19,7 @@ use kingdomscraft\economy\AccountInfo;
 use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\mysql\MySQLTask;
+use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\PluginException;
 
@@ -72,6 +73,10 @@ class AddXpTask extends MySQLTask {
 					$info = $plugin->getEconomy()->getInfo($this->name);
 					if($info instanceof AccountInfo) {
 						$info->xp += $this->amount;
+					}
+					$player = $server->getPlayer($this->name);
+					if($player instanceof Player) {
+						$plugin->getEconomy()->checkLevel($player);
 					}
 					$plugin->getLogger()->debug("Successfully completed AddXpTask on kingdomscraft_economy database for {$this->name}");
 					return;

@@ -59,6 +59,10 @@ class SetXpCommandTask extends SetXpTask {
 					if($info instanceof AccountInfo) {
 						$info->xp = $this->amount;
 					}
+					$player = $server->getPlayer($this->name);
+					if($player instanceof Player) {
+						$plugin->getEconomy()->checkLevel($player);
+					}
 					if($notify) $sender->sendMessage($plugin->getMessage("command.set-xp-success", [$this->name, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed SetXpTask on kingdomscraft_economy database for {$this->name}");
 					return;

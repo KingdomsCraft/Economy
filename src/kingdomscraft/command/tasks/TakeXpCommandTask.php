@@ -58,6 +58,7 @@ class TakeXpCommandTask extends TakeXpTask {
 					$info = $plugin->getEconomy()->getInfo($this->name);
 					if($info instanceof AccountInfo) {
 						$info->xp -= $this->amount;
+						$info->cachedLevel = $plugin->getEconomy()->getLevelWithInfo($info);
 					}
 					if($notify) $sender->sendMessage($plugin->getMessage("command.take-xp-success", [$this->name, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed TakeXpTask on kingdomscraft_economy database for {$this->name}");

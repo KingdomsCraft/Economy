@@ -8,59 +8,77 @@ database:
 xp:
   levels:
     2:
-      xp: 20
+      min-xp: 20
+      max-xp: 29
       commands:
-        - "stell {args1} You've reached level 2, congrats!"
-        - "addgold {args1} 60"
-        - "addrubies {args1} 5"
+        - "stell {player} &aYou've reached level &62&a, congrats!"
+        - "stell {player} &a+60 &6Gold\n&a+5 &6Rubies"
+        - "addgold {player} 60"
+        - "addrubies {player} 5"
     3:
-      xp: 30
+      min-xp: 30
+      max-xp: 39
       commands:
-        - "stell {args1} You've reached level 3, congrats!"
-        - "addgold {args1} 70"
-        - "addrubies {args1} 10"
+        - "stell {player} &aYou've reached level &63&a, congrats!"
+        - "stell {player} &a+70 &6Gold\n&a+10 &6Rubies"
+        - "addgold {player} 70"
+        - "addrubies {player} 10"
     4:
-      xp: 40
+      min-xp: 40
+      max-xp: 49
       commands:
-        - "stell {args1} You've reached level 4, congrats!"
-        - "addgold {args1} 90"
-        - "addrubies {args1} 20"
+        - "stell {player} &aYou've reached level &64&a, congrats!"
+        - "stell {player} &a+90 &6Gold\n&a+20 &6Rubies"
+        - "addgold {player} 90"
+        - "addrubies {player} 20"
     5:
-      xp: 50
+      min-xp: 50
+      max-xp: 59
       commands:
-        - "stell {args1} You've reached level 5, congrats!"
-        - "addgold {args1} 125"
-        - "addrubies {args1} 35"
+        - "stell {player} &aYou've reached level &65&a, congrats!"
+        - "stell {player} &a+125 &6Gold\n&a+35 &6Rubies"
+        - "addgold {player} 125"
+        - "addrubies {player} 35"
     6:
-      xp: 60
+      min-xp: 60
+      max-xp: 69
       commands:
-        - "stell {args1} You've reached level 6, congrats!"
-        - "addgold {args1} 150"
-        - "addrubies {args1} 50"
+        - "stell {player} &aYou've reached level &66&a, congrats!"
+        - "stell {player} &a+150 &6Gold\n&a+50 &6Rubies"
+        - "addgold {player} 150"
+        - "addrubies {player} 50"
     7:
-      xp: 70
+      min-xp: 70
+      max-xp: 79
       commands:
-        - "stell {args1} You've reached level 7, congrats!"
-        - "addgold {args1} 200"
-        - "addrubies {args1} 75"
+        - "stell {player} &aYou've reached level &67&a, congrats!"
+        - "stell {player} &a+200 &6Gold\n&a+75 &6Rubies"
+        - "addgold {player} 200"
+        - "addrubies {player} 75"
     8:
-      xp: 80
+      min-xp: 80
+      max-xp: 89
       commands:
-        - "stell {args1} You've reached level 8, congrats!"
-        - "addgold {args1} 300"
-        - "addrubies {args1} 100"
+        - "stell {player} &aYou've reached level &68&a, congrats!"
+        - "stell {player} &a+300 &6Gold\n&a+100 &6Rubies"
+        - "addgold {player} 300"
+        - "addrubies {player} 100"
     9:
-      xp: 90
+      min-xp: 90
+      max-xp: 99
       commands:
-        - "stell {args1} You've reached level 9, congrats!"
-        - "addgold {args1} 400"
-        - "addrubies {args1} 150"
+        - "stell {player} &aYou've reached level &69&a, congrats!"
+        - "stell {player} &a+400 &6Gold\n&a+150 &6Rubies"
+        - "addgold {player} 400"
+        - "addrubies {player} 150"
     10:
-      xp: 100
+      min-xp: 100
+      max-xp: 1000000000
       commands:
-        - "stell {player} You've reached level 10, congrats!"
-        - "addgold {args1} 600"
-        - "addrubies {args1} 200"
+        - "stell {player} &aYou've reached level &610&a, congrats!"
+        - "stell {player} &a+600 &6Gold\n&a+200 &6Rubies"
+        - "addgold {player} 600"
+        - "addrubies {player} 200"
 messages:
   command:
     in-game: "&cPlease run this command in-game!"
@@ -73,7 +91,7 @@ messages:
     vault-other: "&e-&6==&e- &a{args1}('s) Vault &e-&6==&e-\n&6Gold: &a{args2}\n&6Rubies: &a{args3}"
     vault-self: "&e-&6==&e- &aYour Vault &e-&6==&e-\n&6Gold: &a{args1}\n&6Rubies: &a{args2}"
     check-level-other: "&e-&6==&e- &a{args1}('s) Level info &e-&6==&e-\n&6XP: &a{args2}\n&6XP till next Level: &a{args3}\n&6Current Level: &a{args4}\n&6Next Level: &a{args5}"
-    check-level-self: "&e-&6==&e- &aYour Level info &e-&6==&e-\n&6Gold: &a{args1}\n&6Rubies: &a{args2}"
+    check-level-self: "&e-&6==&e- &aYour Level info &e-&6==&e-\n&6XP: &a{args1}\n&6XP till next Level: &a{args2}\n&6Current Level: &a{args3}\n&6Next Level: &a{args4}"
     pay-success: "Payed {args1} {args2} gold!"
     need-more-gold: "You don't have enough gold to pay {args1}!"
     set-xp-success: "&aSet {args1}('s) XP to {args2}!"

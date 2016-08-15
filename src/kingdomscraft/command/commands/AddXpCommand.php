@@ -23,8 +23,8 @@ use pocketmine\command\CommandSender;
 class AddXpCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
-		parent::__construct($plugin, "addxp", "Give XP to a player", "/givexp {player} {amount}", []);
+		parent::__construct($plugin, "addxp", "Give XP to a player", "/addxp {player} {amount}", ["givexp"]);
+		$this->setPermission("economy.command.addxp");
 	}
 
 	/**

@@ -23,8 +23,8 @@ use pocketmine\command\CommandSender;
 class TakeGoldCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
 		parent::__construct($plugin, "takegold", "Take gold from a player", "/takegold {player} {amount}", []);
+		$this->setPermission("economy.command.takegold");
 	}
 
 	/**

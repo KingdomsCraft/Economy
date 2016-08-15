@@ -19,6 +19,7 @@ use kingdomscraft\command\commands\AddGoldCommand;
 use kingdomscraft\command\commands\AddLevelCommand;
 use kingdomscraft\command\commands\AddRubiesCommand;
 use kingdomscraft\command\commands\AddXpCommand;
+use kingdomscraft\command\commands\CheckLevelCommand;
 use kingdomscraft\command\commands\PayCommand;
 use kingdomscraft\command\commands\PrestigeCommand;
 use kingdomscraft\command\commands\SetGoldCommand;
@@ -65,6 +66,7 @@ class EconomyCommandMap {
 			new AddGoldCommand($this->plugin),
 			new AddRubiesCommand($this->plugin),
 			new AddXpCommand($this->plugin),
+			new CheckLevelCommand($this->plugin),
 			new PayCommand($this->plugin),
 			new SetGoldCommand($this->plugin),
 			new SetRubiesCommand($this->plugin),

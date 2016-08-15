@@ -44,7 +44,7 @@ class UpdateTask extends MySQLTask {
 		$info = AccountInfo::createInstance();
 		$info->unserialize($this->info);
 		// Do the query
-		$mysqli->query("UPDATE kingdomscraft_economy SET xp_level = {$info->level}, xp = {$info->xp}, gold = {$info->gold}, rubies = {$info->rubies} WHERE username = '{$mysqli->escape_string($this->name)}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET xp = {$info->xp}, gold = {$info->gold}, rubies = {$info->rubies} WHERE username = '{$mysqli->escape_string($this->name)}'");
 		unset($info);
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;

@@ -49,6 +49,10 @@ class Main extends PluginBase {
 		$this->settings = new Config($this->getDataFolder() . "Settings.yml", Config::YAML);
 	}
 
+	public function loadLevelInfo() {
+
+	}
+
 	/**
 	 * @return Economy
 	 */
@@ -144,6 +148,7 @@ class Main extends PluginBase {
 	}
 
 	public function getLevelForXp($xp) {
+		$nextLevel = null;
 		foreach($this->settings->getNested("xp.levels") as $levels) {
 			// TODO
 		}

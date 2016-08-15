@@ -19,6 +19,7 @@ use kingdomscraft\economy\provider\mysql\MySQLEconomyProvider;
 use kingdomscraft\Main;
 use kingdomscraft\provider\DummyProvider;
 use kingdomscraft\provider\mysql\MySQLCredentials;
+use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
 
 class Economy {
@@ -34,6 +35,9 @@ class Economy {
 	
 	/** @var EconomyListener */
 	private $listener;
+
+	/** @var LevelInfo[] */
+	private $levels = [];
 
 	/** @var AccountInfo[] */
 	private $infoPool = [];
@@ -63,6 +67,7 @@ class Economy {
 	private function __construct(Main $plugin) {
 		$this->plugin = $plugin;
 		self::$instance = $this;
+		$this->setLevelInfo();
 		$this->setProvider();
 		$this->setListener();
 	}
@@ -103,6 +108,20 @@ class Economy {
 	}
 
 	/**
+	 * Set all the level info
+	 */
+	protected function setLevelInfo() {
+		foreach($this->plugin->getSettings()->getNested("xp.levels") as $key => $data) {
+			$this->levels[$key] = LevelInfo::fromArray([
+				"level" => $key,
+				"minXp" => $data["min-xp"],
+				"maxXp" => $data["max-xp"],
+				"commands" => $data["commands"]
+			]);
+		}
+	}
+
+	/**
 	 * @param Player|string $player
 	 *
 	 * @return AccountInfo
@@ -111,7 +130,7 @@ class Economy {
 		if($player instanceof Player) {
 			$player = $player->getName();
 		}
-		return $this->infoPool[strtolower($player)];
+		return ($this->hasInfo($player) ? $this->infoPool[strtolower($player)] : null);
 	}
 
 	/**
@@ -146,7 +165,75 @@ class Economy {
 		}
 		unset($this->infoPool[strtolower($player)]);
 	}
-	
+
+	/**
+	 * @param Player $player
+	 *
+	 * @return int|LevelInfo
+	 */
+	public function getNextLevel(Player $player) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$level = $info->cachedLevel;
+			return (isset($this->levels[$level + 1]) ? $this->levels[$level + 1]->level : $level);
+		}
+		return 1;
+	}
+
+	/**
+	 * @param int $currentXp
+	 *
+	 * @return int int
+	 */
+	public function getNextLevelWithXp($currentXp) {
+		$level = $this->getLevelWithXp($currentXp);
+		return (isset($this->levels[$level + 1]) ? $this->levels[$level + 1]->level : $level);
+	}
+
+	/**
+	 * @param Player $player
+	 */
+	public function checkLevel(Player $player) {
+		$info = $this->getInfo($player);
+		if($info instanceof AccountInfo) {
+			$cached = $info->cachedLevel;
+			$current = $this->getLevel($player);
+			$next = $this->getNextLevel($player);
+//			var_dump("Cached: " . $cached . PHP_EOL . "Next: ", $next);
+			if($current <= $cached) return;
+			if($next <= $cached) return;
+			if(isset($this->levels[$next])) {
+				foreach($this->levels[$next]->commands as $commands) {
+					$this->plugin->getServer()->dispatchCommand(new ConsoleCommandSender(), str_replace("{player}", $player->getName(), $commands));
+				}
+			}
+			$info->cachedLevel = $next;
+			$this->checkLevel($player);
+		}
+	}
+
+	/**
+	 * @param int $xp
+	 *
+	 * @return int
+	 */
+	public function getLevelWithXp($xp) {
+		foreach($this->levels as $level) {
+			if($xp >= $level->minXp and $xp <= $level->maxXp) return $level->level;
+		}
+		return 1;
+	}
+
+	/**
+	 * @param int $currentXp
+	 *
+	 * @return int
+	 */
+	public function getXpTillNextLevel($currentXp) {
+		$nextLevel = $this->getNextLevelWithXp($currentXp);
+		return $this->levels[$nextLevel]->minXp - $currentXp;
+	}
+
 	/*
 	 * Economy API stuff
 	 */
@@ -172,7 +259,24 @@ class Economy {
 	 */
 	public function getLevel(Player $player) {
 		$info = $this->getInfo($player);
-		return $info instanceof AccountInfo ? $this->plugin : 1;
+		if($info instanceof AccountInfo) {
+			foreach($this->levels as $level) {
+				if($info->xp >= $level->minXp and $info->xp <= $level->maxXp) return $level->level;
+			}
+		}
+		return 1;
+	}
+
+	/**
+	 * @param AccountInfo $info
+	 *
+	 * @return int
+	 */
+	public function getLevelWithInfo(AccountInfo $info) {
+		foreach($this->levels as $level) {
+			if($info->xp >= $level->minXp and $info->xp <= $level->maxXp) return $level->level;
+		}
+		return 1;
 	}
 
 	/**

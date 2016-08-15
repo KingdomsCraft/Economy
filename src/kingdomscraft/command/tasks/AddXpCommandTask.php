@@ -51,7 +51,11 @@ class AddXpCommandTask extends AddXpTask {
 					if($info instanceof AccountInfo) {
 						$info->xp += $this->amount;
 					}
-					if($notify) $sender->sendMessage($plugin->getMessage("command.set-gold-success", [$this->name, $this->amount]));
+					$player = $server->getPlayer($this->name);
+					if($player instanceof Player) {
+						$plugin->getEconomy()->checkLevel($player);
+					}
+					if($notify) $sender->sendMessage($plugin->getMessage("command.add-xp-success", [$this->name, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed AddXpTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:

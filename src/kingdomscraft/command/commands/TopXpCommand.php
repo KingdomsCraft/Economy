@@ -23,8 +23,8 @@ use pocketmine\command\CommandSender;
 class TopXpCommand extends EconomyCommand {
 
 	public function __construct(Main $plugin) {
-//		$this->setPermission("economy.command.setgold");
 		parent::__construct($plugin, "topxp", "Get a list of the players with the most XP", "/topxp {page}", []);
+		$this->setPermission("economy.command.topxp");
 	}
 
 	/**
