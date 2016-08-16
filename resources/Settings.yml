@@ -5,6 +5,13 @@ database:
   password: "root"
   name: "test"
   port: 3306
+factions-mode:
+  enabled: true
+  xp: 5
+  take-xp-from-victim: true
+  gold: 2
+  take-gold-from-victim: true
+  message: "&6You gained &a5 XP &6and &a2 gold &6for killing &7{victim}&6!&r"
 xp:
   levels:
     2:

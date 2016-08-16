@@ -15,11 +15,14 @@
 
 namespace kingdomscraft\economy;
 
+use kingdomscraft\Main;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerKickEvent;
 use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\Player;
 
 class EconomyListener implements Listener {
 
@@ -49,6 +52,27 @@ class EconomyListener implements Listener {
 	public function onPreLogin(PlayerPreLoginEvent $event) {
 		$player = $event->getPlayer();
 		$this->economy->getProvider()->load($player->getName());
+	}
+
+	/**
+	 * @param PlayerDeathEvent $event
+	 */
+	public function onPLayerDeath(PlayerDeathEvent $event) {
+		$victim = $event->getEntity();
+		$cause = $victim->getLastDamageCause();
+		if($cause instanceof EntityDamageByEntityEvent) {
+			$attacker = $cause->getDamager();
+			if($attacker instanceof Player) {
+				$factionsModeData = $this->economy->getPlugin()->getSettings()->getNested("factions-mode");
+				if($factionsModeData["enabled"]) {
+					$this->economy->addXp($attacker, $factionsModeData["xp"]);
+					if($factionsModeData["take-xp-from-victim"]) $this->economy->removeXp($victim, $factionsModeData["xp"]);
+					$this->economy->addGold($attacker, $factionsModeData["gold"]);
+					if($factionsModeData["take-gold-from-victim"]) $this->economy->removeGold($victim, $factionsModeData["gold"]);
+					$attacker->sendMessage(Main::translateColors(str_replace("{victim}", $victim->getName(), $factionsModeData["message"])));
+				}
+			}
+		}
 	}
 
 	/**
