@@ -48,7 +48,7 @@ class TakeGoldTask extends MySQLTask {
 		// Check for connection errors
 		if($this->checkConnection($mysqli)) return;
 		// Do the query
-		$mysqli->query("UPDATE kingdomscraft_economy SET gold = gold - {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET gold = GREATEST(gold - {$this->amount}, 0) WHERE username = '{$mysqli->escape_string($this->name)}'");
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;
 		// Handle the query data

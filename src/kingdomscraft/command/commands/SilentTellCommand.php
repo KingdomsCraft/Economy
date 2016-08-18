@@ -24,11 +24,11 @@ class SilentTellCommand extends EconomyCommand{
 				$player->sendMessage(Main::translateColors(implode(" ", $args)));
 				return true;
 			} else {
-				$sender->sendMessage($this->getPlugin()->getMessage("command.player-offline", [$player]));
+				$sender->sendMessage($this->getPlugin()->getMessage("player-offline", [$player]));
 				return true;
 			}
 		} else {
-			$sender->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
+			$sender->sendMessage($this->getPlugin()->getMessage("usage", [$this->getUsage()]));
 			return true;
 		}
 	}

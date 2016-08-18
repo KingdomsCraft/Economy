@@ -45,11 +45,11 @@ class PayCommand extends EconomyPlayerCommand {
 					return true;
 				}
 			} else {
-				$player->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+				$player->sendMessage($this->getPlugin()->getMessage("cannot-be-negative"));
 				return true;
 			}
 		} else {
-			$player->sendMessage($this->getPlugin()->getMessage("command.usage", [$this->getUsage()]));
+			$player->sendMessage($this->getPlugin()->getMessage("usage", [$this->getUsage()]));
 			return true;
 		}
 	}

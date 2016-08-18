@@ -167,6 +167,8 @@ class Economy {
 	}
 
 	/**
+	 * Get a players next level
+	 *
 	 * @param Player $player
 	 *
 	 * @return int|LevelInfo
@@ -181,6 +183,8 @@ class Economy {
 	}
 
 	/**
+	 * Get a players next level with their current XP
+	 *
 	 * @param int $currentXp
 	 *
 	 * @return int int
@@ -191,6 +195,8 @@ class Economy {
 	}
 
 	/**
+	 * Check to see if a player has leveled up
+	 *
 	 * @param Player $player
 	 */
 	public function checkLevel(Player $player) {
@@ -199,7 +205,6 @@ class Economy {
 			$cached = $info->cachedLevel;
 			$current = $this->getLevel($player);
 			$next = $this->getNextLevel($player);
-//			var_dump("Cached: " . $cached . PHP_EOL . "Next: ", $next);
 			if($current <= $cached) return;
 			if($next <= $cached) return;
 			if(isset($this->levels[$next])) {
@@ -213,6 +218,8 @@ class Economy {
 	}
 
 	/**
+	 * Get a level based on it's XP value
+	 *
 	 * @param int $xp
 	 *
 	 * @return int
@@ -225,6 +232,8 @@ class Economy {
 	}
 
 	/**
+	 * Get the XP required until the next level wih XP
+	 *
 	 * @param int $currentXp
 	 *
 	 * @return int
@@ -268,6 +277,8 @@ class Economy {
 	}
 
 	/**
+	 * Get a players current Level with their account info
+	 *
 	 * @param AccountInfo $info
 	 *
 	 * @return int
@@ -312,8 +323,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function addXp($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->addXp($player, $amount);
 	}
 
@@ -326,8 +337,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function addGold($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->addGold($player, $amount);
 	}
 
@@ -340,8 +351,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function addRubies($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->addRubies($player, $amount);
 	}
 
@@ -354,8 +365,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function setXp($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->setXp($player, $amount);
 	}
 
@@ -366,8 +377,8 @@ class Economy {
 	 * @param int $amount
 	 */
 	public function setGold($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->setGold($player, $amount);
 	}
 
@@ -378,8 +389,8 @@ class Economy {
 	 * @param int $amount
 	 */
 	public function setRubies($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->setRubies($player->getName(), $amount);
 	}
 
@@ -392,8 +403,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function removeXp($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->takeXp($player, $amount);
 	}
 
@@ -406,8 +417,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function removeGold($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->takeGold($player, $amount);
 	}
 
@@ -420,8 +431,8 @@ class Economy {
 	 * @return bool
 	 */
 	public function removeRubies($player, $amount = 1) {
-		if($player instanceof Player)
-			$player = $player->getName();
+		if($player instanceof Player) $player = $player->getName();
+		if($amount < 0) $amount = 0;
 		$this->provider->takeRubies($player, $amount);
 	}
 

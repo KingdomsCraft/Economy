@@ -42,7 +42,7 @@ class CheckLevelCommand extends EconomyCommand {
 				$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new CheckLevelCommandTask($this->getPlugin()->getEconomy()->getProvider(), $sender->getName(), $sender->getName()));
 				return true;
 			} else {
-				$sender->sendMessage($this->getPlugin()->getMessage("command.in-game"));
+				$sender->sendMessage($this->getPlugin()->getMessage("in-game"));
 				return true;
 			}
 		}

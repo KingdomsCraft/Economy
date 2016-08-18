@@ -57,25 +57,25 @@ class ViewVaultCommandTask extends LoadTask {
 				case self::SUCCESS:
 					if($notify) {
 						if(strtolower($this->sender) === $this->name) {
-							$sender->sendMessage($plugin->getMessage("command.vault-self", [$result[1]["gold"], $result[1]["rubies"]]));
+							$sender->sendMessage($plugin->getMessage("vault-self", [$result[1]["gold"], $result[1]["rubies"]]));
 						} else {
-							$sender->sendMessage($plugin->getMessage("command.vault-other", [$this->name, $result[1]["gold"], $result[1]["rubies"]]));
+							$sender->sendMessage($plugin->getMessage("vault-other", [$this->name, $result[1]["gold"], $result[1]["rubies"]]));
 						}
 					}
 					$plugin->getLogger()->debug("Successfully completed ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::MYSQLI_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing ViewVaultCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::NO_DATA:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
+					if($notify) $sender->sendMessage($plugin->getMessage("no-data", [$this->name]));
 					$plugin->getLogger()->debug("Couldn't find economy data on kingdomscraft_database for {$this->name}");
 					return;
 			}

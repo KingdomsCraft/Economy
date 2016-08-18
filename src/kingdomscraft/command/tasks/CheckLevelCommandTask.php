@@ -45,25 +45,25 @@ class CheckLevelCommandTask extends LoadTask {
 					if($notify) {
 						$xp = $result[1]["xp"];
 						if(strtolower($this->sender) === $this->name) {
-							$sender->sendMessage($plugin->getMessage("command.check-level-self", [$xp, $plugin->getEconomy()->getXpTillNextLevel($xp), $plugin->getEconomy()->getLevelWithXp($xp), $plugin->getEconomy()->getNextLevelWithXp($xp)]));
+							$sender->sendMessage($plugin->getMessage("check-level-self", [$xp, $plugin->getEconomy()->getXpTillNextLevel($xp), $plugin->getEconomy()->getLevelWithXp($xp), $plugin->getEconomy()->getNextLevelWithXp($xp)]));
 						} else {
-							$sender->sendMessage($plugin->getMessage("command.check-level-other", [$this->name, $xp, $plugin->getEconomy()->getXpTillNextLevel($xp), $plugin->getEconomy()->getLevelWithXp($xp), $plugin->getEconomy()->getNextLevelWithXp($xp)]));
+							$sender->sendMessage($plugin->getMessage("check-level-other", [$this->name, $xp, $plugin->getEconomy()->getXpTillNextLevel($xp), $plugin->getEconomy()->getLevelWithXp($xp), $plugin->getEconomy()->getNextLevelWithXp($xp)]));
 						}
 					}
 					$plugin->getLogger()->debug("Successfully completed CheckLevelCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing CheckLevelCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::MYSQLI_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing CheckLevelCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::NO_DATA:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
+					if($notify) $sender->sendMessage($plugin->getMessage("no-data", [$this->name]));
 					$plugin->getLogger()->debug("Couldn't find economy data on kingdomscraft_database for {$this->name}");
 					return;
 			}

@@ -5,6 +5,16 @@ database:
   password: "root"
   name: "test"
   port: 3306
+shop:
+  identifiers:
+    - "shop"
+    - "signshop"
+    - "signsell"
+  format:
+    1: "&7[&6Shop&7]&r"
+    2: "&6{type} $&a{price}&r"
+    3: "&eAmount: &6{amount}&r"
+    4: "&e{item}&r"
 factions-mode:
   enabled: true
   xp: 5
@@ -86,36 +96,3 @@ xp:
         - "stell {player} &a+600 &6Gold\n&a+200 &6Rubies"
         - "addgold {player} 600"
         - "addrubies {player} 200"
-messages:
-  command:
-    in-game: "&cPlease run this command in-game!"
-    player-offline: "&c{args1} is not online!"
-    usage: "&cUsage: &6{args1}"
-    db-connection-error: "&cUh oh, looks like there was an error connecting to the database!"
-    error: "&cOops, looks like there was an error executing the command!"
-    cannot-be-negative: "&cValue cannot be negative!"
-    no-data: "&cCouldn't find any economy data for {args1}!"
-    vault-other: "&e-&6==&e- &a{args1}('s) Vault &e-&6==&e-\n&6Gold: &a{args2}\n&6Rubies: &a{args3}"
-    vault-self: "&e-&6==&e- &aYour Vault &e-&6==&e-\n&6Gold: &a{args1}\n&6Rubies: &a{args2}"
-    check-level-other: "&e-&6==&e- &a{args1}('s) Level info &e-&6==&e-\n&6XP: &a{args2}\n&6XP till next Level: &a{args3}\n&6Current Level: &a{args4}\n&6Next Level: &a{args5}"
-    check-level-self: "&e-&6==&e- &aYour Level info &e-&6==&e-\n&6XP: &a{args1}\n&6XP till next Level: &a{args2}\n&6Current Level: &a{args3}\n&6Next Level: &a{args4}"
-    pay-success: "Payed {args1} {args2} gold!"
-    need-more-gold: "You don't have enough gold to pay {args1}!"
-    set-xp-success: "&aSet {args1}('s) XP to {args2}!"
-    add-xp-success: "&aGave {args1}('s) {args2} XP!"
-    take-xp-success: "&aTook {args1} XP from {args2}"
-    top-xp-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &aXP&r"
-    top-xp-success: "&e-&6==&e- Top XP &e-&6==&e-\n{args1}"
-    set-level-success: "&aSet {args1}('s) level to {args2}!"
-    add-level-success: "&aGave {args1}('s) {args2} levels!"
-    take-level-success: "&aTook {args1} levels from {args2}"
-    set-gold-success: "&aSet {args1}('s) gold to {args2}!"
-    add-gold-success: "&aGave {args1}('s) {args2} gold!"
-    take-gold-success: "&aTook {args1} gold from {args2}"
-    top-gold-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &agold&r"
-    top-gold-success: "&e-&6==&e- Top gold &e-&6==&e-\n{args1}"
-    set-rubies-success: "&aSet {args1}('s) rubies to {args2}!"
-    add-rubies-success: "&aGave {args1}('s) {args2} rubies!"
-    take-rubies-success: "&aTook {args1} rubies from {args2}"
-    top-rubies-format: "&a#{args1} &7- &6{args2} &awith &6{args3} &arubies&r"
-    top-rubies-success: "&e-&6==&e- Top rubies &e-&6==&e-\n{args1}"

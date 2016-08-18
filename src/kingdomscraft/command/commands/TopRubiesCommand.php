@@ -43,7 +43,7 @@ class TopRubiesCommand extends EconomyCommand {
 			$this->getPlugin()->getServer()->getScheduler()->scheduleAsyncTask(new TopRubiesCommandTask($this->getPlugin()->getEconomy()->getProvider(), $sender->getName(), $page));
 			return true;
 		} else {
-			$sender->sendMessage($this->getPlugin()->getMessage("command.cannot-be-negative"));
+			$sender->sendMessage($this->getPlugin()->getMessage("cannot-be-negative"));
 			return true;
 		}
 	}

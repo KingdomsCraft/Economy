@@ -48,7 +48,7 @@ class SetRubiesTask extends MySQLTask {
 		// Check for connection errors
 		if($this->checkConnection($mysqli)) return;
 		// Do the query
-		$mysqli->query("UPDATE kingdomscraft_economy SET rubies = rubies + {$this->amount} WHERE username = '{$mysqli->escape_string($this->name)}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET rubies = GREATEST({$this->amount}, 0) WHERE username = '{$mysqli->escape_string($this->name)}'");
 		// Check for any random errors
 		if($this->checkError($mysqli)) return;
 		// Handle the query data

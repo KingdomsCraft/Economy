@@ -52,7 +52,7 @@ class PayCommandTask extends MySQLTask {
 	public function onRun() {
 		$mysqli = $this->getMysqli();
 		$this->checkConnection($mysqli);
-		$mysqli->query("UPDATE kingdomscraft_economy SET gold = gold - {$this->amount} WHERE username = '{$this->from}'");
+		$mysqli->query("UPDATE kingdomscraft_economy SET gold = GREATEST(gold - {$this->amount}, 0) WHERE username = '{$this->from}'");
 		$this->checkError($mysqli);
 		$mysqli->query("UPDATE kingdomscraft_economy SET gold = gold + {$this->amount} WHERE username = '{$this->to}'");
 		$this->checkError($mysqli);
@@ -86,21 +86,21 @@ class PayCommandTask extends MySQLTask {
 					if($info instanceof AccountInfo) {
 						$info->gold += $this->amount;
 					}
-					if($notify) $sender->sendMessage($plugin->getMessage("command.pay-success", [$this->to, $this->amount]));
+					if($notify) $sender->sendMessage($plugin->getMessage("pay-success", [$this->to, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed PayCommandTask on kingdomscraft_economy database for {$this->to}");
 					return;
 				case self::CONNECTION_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing PayCommandTask on kingdomscraft_economy database for {$this->to}");
 					return;
 				case self::MYSQLI_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing PayCommandTask on kingdomscraft_economy database for {$this->to}");
 					return;
 				case self::NO_DATA:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->to]));
+					if($notify) $sender->sendMessage($plugin->getMessage("no-data", [$this->to]));
 					$plugin->getLogger()->debug("Failed to execute PayCommandTask on kingdomscraft_database for {$this->to} as they don't have any data");
 					return;
 			}

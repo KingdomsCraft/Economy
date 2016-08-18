@@ -59,21 +59,21 @@ class SetGoldCommandTask extends SetGoldTask {
 					if($info instanceof AccountInfo) {
 						$info->gold = $this->amount;
 					}
-					if($notify) $sender->sendMessage($plugin->getMessage("command.set-gold-success", [$this->name, $this->amount]));
+					if($notify) $sender->sendMessage($plugin->getMessage("set-gold-success", [$this->name, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::CONNECTION_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.db-connection-error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::MYSQLI_ERROR:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.error"));
+					if($notify) $sender->sendMessage($plugin->getMessage("error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing SetGoldCommandTask on kingdomscraft_economy database for {$this->name}");
 					return;
 				case self::NO_DATA:
-					if($notify) $sender->sendMessage($plugin->getMessage("command.no-data", [$this->name]));
+					if($notify) $sender->sendMessage($plugin->getMessage("no-data", [$this->name]));
 					$plugin->getLogger()->debug("Failed to execute SetGoldCommandTask on kingdomscraft_database for {$this->name} as they don't have any data");
 					return;
 			}

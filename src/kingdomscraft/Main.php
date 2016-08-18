@@ -17,7 +17,14 @@ namespace kingdomscraft;
 
 use kingdomscraft\command\EconomyCommandMap;
 use kingdomscraft\economy\Economy;
+use kingdomscraft\tile\RubyShopSign;
+use kingdomscraft\tile\ShopSign;
+use pocketmine\item\Item;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ShortTag;
 use pocketmine\plugin\PluginBase;
+use pocketmine\tile\Tile;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat as TF;
 
@@ -26,11 +33,22 @@ class Main extends PluginBase {
 	/** @var Config */
 	public $settings = [];
 
+	/** @var array */
+	protected $messages = [];
+
 	/** @var Economy */
 	private $economy;
 
 	/** @var EconomyCommandMap */
 	private $commandMap;
+
+	const SHOP_SIGN = "ShopSign";
+	const RUBY_SHOP_SIGN = "RubyShopSign";
+
+	public function onLoad() {
+		Tile::registerTile(ShopSign::class);
+		Tile::registerTile(RubyShopSign::class);
+	}
 
 	/**
 	 * Enable all modules and load configs
@@ -47,10 +65,23 @@ class Main extends PluginBase {
 	public function loadConfigs() {
 		$this->saveResource("Settings.yml");
 		$this->settings = new Config($this->getDataFolder() . "Settings.yml", Config::YAML);
+		$this->saveResource("Messages.yml");
+		$messages = (new Config($this->getDataFolder() . "Messages.yml", Config::YAML))->getAll();
+		foreach($messages as $key => $message) {
+			$this->loadMessage($message, $key);
+		}
 	}
 
-	public function loadLevelInfo() {
-
+	/**
+	 * @param $message
+	 * @param $key
+	 */
+	public function loadMessage($message, $key) {
+		if(is_array($message)) {
+			foreach($message as $key => $msg) $this->loadMessage($msg, $key);
+		} elseif(is_string($message)) {
+			$this->messages[strtolower($key)] = self::translateColors($message);
+		}
 	}
 
 	/**
@@ -89,13 +120,13 @@ class Main extends PluginBase {
 	}
 
 	/**
-	 * @param string $nested
+	 * @param string $key
 	 * @param array $args
 	 *
 	 * @return string
 	 */
-	public function getMessage($nested, array $args = []) {
-		return self::translateColors(self::translateArguments($this->settings->getNested("messages.{$nested}", " "), $args));
+	public function getMessage($key, array $args = []) {
+		return self::translateColors(self::translateArguments($this->messages[strtolower($key)], $args));
 	}
 
 	/**
@@ -147,11 +178,28 @@ class Main extends PluginBase {
 		return $message;
 	}
 
-	public function getLevelForXp($xp) {
-		$nextLevel = null;
-		foreach($this->settings->getNested("xp.levels") as $levels) {
-			// TODO
+	/**
+	 * @param Item $item
+	 * @param int  $slot
+	 * @return CompoundTag
+	 */
+	public static function putItem(Item $item, $slot = null, $tagName = null){
+		$tag = new CompoundTag($tagName, [
+			"id" => new ShortTag("id", $item->getId()),
+			"Count" => new ByteTag("Count", $item->getCount()),
+			"Damage" => new ShortTag("Damage", $item->getDamage())
+		]);
+
+		if($slot !== null){
+			$tag->Slot = new ByteTag("Slot", (int) $slot);
 		}
+
+		if($item->hasCompoundTag()){
+			$tag->tag = clone $item->getNamedTag();
+			$tag->tag->setName("tag");
+		}
+
+		return $tag;
 	}
 
 }

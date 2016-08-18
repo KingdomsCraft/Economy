@@ -79,17 +79,19 @@ class TopGoldCommandTask extends MySQLTask {
 					$message = "";
 					$rank = 1;
 					foreach($result[1] as $data) {
-						$message .= $plugin->getMessage("command.top-gold-format", [$rank++, $data[0], $data[1]]) . "\n";
+						$message .= $plugin->getMessage("top-gold-format", [$rank++, $data[0], $data[1]]) . "\n";
 					}
 //					var_dump($message);
-					if($notify) $sender->sendMessage($plugin->getMessage("command.top-gold-success", [$message]));
+					if($notify) $sender->sendMessage($plugin->getMessage("top-gold-success", [$message]));
 					$plugin->getLogger()->debug("Successfully completed TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::CONNECTION_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("db-connection-error"));
 					$plugin->getLogger()->critical("Couldn't connect to kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("Connection error while executing TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::MYSQLI_ERROR:
+					if($notify) $sender->sendMessage($plugin->getMessage("error"));
 					$plugin->getLogger()->error("MySQL error while querying kingdomscraft_database! Error: {$result[1]}");
 					$plugin->getLogger()->debug("MySQL error while executing TopGoldTask on kingdomscraft_economy database");
 					return;
