@@ -73,9 +73,7 @@ class PayCommandTask extends MySQLTask {
 			$result = $this->getResult();
 			$notify = false;
 			$sender = $server->getPlayerExact($this->from);
-			if($sender instanceof Player) {
-				$notify = true;
-			}
+			if($sender instanceof Player) $notify = true;
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
 					$info = $plugin->getEconomy()->getInfo($this->from);
@@ -87,6 +85,8 @@ class PayCommandTask extends MySQLTask {
 						$info->gold += $this->amount;
 					}
 					if($notify) $sender->sendMessage($plugin->getMessage("pay-success", [$this->to, $this->amount]));
+					$to = $server->getPlayerExact($this->to);
+					if($to instanceof Player) $to->sendMessage($plugin->getMessage("pay-receive", [$this->from, $this->amount]));
 					$plugin->getLogger()->debug("Successfully completed PayCommandTask on kingdomscraft_economy database for {$this->to}");
 					return;
 				case self::CONNECTION_ERROR:

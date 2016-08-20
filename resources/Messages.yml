@@ -11,6 +11,7 @@ command:
     check-level-other: "&e-&6==&e- &a{args1}('s) Level info &e-&6==&e-\n&6XP: &a{args2}\n&6XP till next Level: &a{args3}\n&6Current Level: &a{args4}\n&6Next Level: &a{args5}"
     check-level-self: "&e-&6==&e- &aYour Level info &e-&6==&e-\n&6XP: &a{args1}\n&6XP till next Level: &a{args2}\n&6Current Level: &a{args3}\n&6Next Level: &a{args4}"
     pay-success: "&aPayed {args1} {args2} gold!"
+    pay-receive: "&a{args1} payed you {args2} gold!"
     page-format: "page: {args1} "
     need-more-gold: "&cYou don't have enough gold to pay {args1}!"
     set-xp-success: "&aSet {args1} XP to {args2}!"
