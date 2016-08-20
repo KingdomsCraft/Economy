@@ -29,7 +29,7 @@ class AccountInfo {
 	public $gold = 0;
 
 	/** @var int */
-	public $rubies = 0;
+	public $rubies = 10;
 
 	/** @var int */
 	public $cachedLevel = 1;

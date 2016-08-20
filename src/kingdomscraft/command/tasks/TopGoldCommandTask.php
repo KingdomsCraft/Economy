@@ -31,6 +31,12 @@ class TopGoldCommandTask extends MySQLTask {
 	/** @var int */
 	protected $page;
 
+	/** @var int */
+	protected $lowestRank = 1;
+
+	/** @var int */
+	protected $highestRank = 1;
+
 	/**
 	 * TopGoldCommandTask constructor
 	 *
@@ -41,13 +47,15 @@ class TopGoldCommandTask extends MySQLTask {
 	public function __construct(MySQLEconomyProvider $provider, $sender, $page) {
 		parent::__construct($provider->getCredentials());
 		$this->sender = $sender;
-		$this->page;
+		$this->page = $page;
+		$this->highestRank = $page * 5;
+		$this->lowestRank = $this->highestRank - 5;
 	}
 
 	public function onRun() {
 		$mysqli = $this->getMysqli();
 		if($this->checkConnection($mysqli)) return;
-		$result = $mysqli->query("SELECT username, gold FROM kingdomscraft_economy ORDER BY gold DESC LIMIT 5");
+		$result = $mysqli->query("SELECT username, gold FROM kingdomscraft_economy ORDER BY gold DESC LIMIT {$this->lowestRank}, {$this->highestRank}");
 		if($this->checkError($mysqli)) return;
 		if($result instanceof \mysqli_result) {
 			$data = $result->fetch_all();
@@ -75,14 +83,15 @@ class TopGoldCommandTask extends MySQLTask {
 			}
 			switch((is_array($result) ? $result[0] : $result)) {
 				case self::SUCCESS:
-//					var_dump($result[1]);
 					$message = "";
-					$rank = 1;
+					$rank = $this->lowestRank + 1;
 					foreach($result[1] as $data) {
+						if($rank - 1 >= $this->highestRank) break;
 						$message .= $plugin->getMessage("top-gold-format", [$rank++, $data[0], $data[1]]) . "\n";
 					}
-//					var_dump($message);
-					if($notify) $sender->sendMessage($plugin->getMessage("top-gold-success", [$message]));
+					$page = "";
+					if($this->page != 1) $page = $plugin->getMessage("page-format", [(string)$this->page]);
+					if($notify) $sender->sendMessage($plugin->getMessage("top-gold-success", [$page, $message]));
 					$plugin->getLogger()->debug("Successfully completed TopGoldTask on kingdomscraft_economy database");
 					return;
 				case self::CONNECTION_ERROR:
