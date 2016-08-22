@@ -53,7 +53,7 @@ class TopXpCommandTask extends MySQLTask{
 	public function onRun() {
 		$mysqli = $this->getMysqli();
 		if($this->checkConnection($mysqli)) return;
-		$result = $mysqli->query("SELECT username, rubies FROM kingdomscraft_economy ORDER BY rubies DESC LIMIT {$this->lowestRank}, {$this->highestRank}");
+		$result = $mysqli->query("SELECT username, xp FROM kingdomscraft_economy ORDER BY rubies DESC LIMIT {$this->lowestRank}, {$this->highestRank}");
 		if($this->checkError($mysqli)) return;
 		if($result instanceof \mysqli_result) {
 			$data = $result->fetch_all();
