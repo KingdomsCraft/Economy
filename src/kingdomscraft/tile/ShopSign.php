@@ -20,20 +20,20 @@ class ShopSign extends Sign {
 	public function __construct(FullChunk $chunk, CompoundTag $nbt) {
 		parent::__construct($chunk, $nbt);
 		if(!isset($nbt->ShopData)) {
-			$nbt->ShopData = new CompoundTag("ShopData", [
+			$this->namedtag->ShopData = new CompoundTag("ShopData", [
 				"Type" => new StringTag("Type", self::TYPE_BUY),
 				"Price" => new IntTag("Price", 0),
 				"Item" => Main::putItem(Item::get(Item::AIR), null, "Item")
 			]);
 		}
 		if(!isset($nbt->ShopData->Type)) {
-			$nbt->ShopData->Type = new StringTag("Type", self::TYPE_BUY);
+			$this->namedtag->ShopData->Type = new StringTag("Type", self::TYPE_BUY);
 		}
 		if(!isset($nbt->ShopData->Price)) {
-			$nbt->ShopData->Price = new IntTag("Price", 0);
+			$this->namedtag->ShopData->Price = new IntTag("Price", 0);
 		}
 		if(!isset($nbt->ShopData->Item)) {
-			$nbt->ShopData->Item = Main::putItem(Item::get(Item::AIR), null, "Item");
+			$this->namedtag->ShopData->Item = Main::putItem(Item::get(Item::AIR), null, "Item");
 		}
 	}
 
