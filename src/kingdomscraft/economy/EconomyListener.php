@@ -190,7 +190,7 @@ class EconomyListener implements Listener {
 				} elseif($tile->getType() === ShopSign::TYPE_SELL) {
 					if($inv->contains($item)) {
 						$this->economy->addGold($player, $price);
-						$inv->remove($item);
+						$inv->removeItem($item);
 						$player->sendMessage($this->getPlugin()->getMessage("sell-success", [$item->getName() . ($item->getDamage() == 0 ? "" : $item->getDamage()), $item->getCount(), $price]));
 					} else {
 						$player->sendMessage($this->getPlugin()->getMessage("no-items"));
