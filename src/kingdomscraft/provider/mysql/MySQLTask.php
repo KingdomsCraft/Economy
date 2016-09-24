@@ -19,6 +19,9 @@ use pocketmine\scheduler\AsyncTask;
 
 abstract class MySQLTask extends AsyncTask {
 
+	/* Key to save a database instance into the worker thread */
+	const ECONOMY_MYSQLI_KEY = "kingdomscraft.economy.mysqli.key";
+
 	/** @var MySQLCredentials */
 	private $credentials;
 
@@ -42,7 +45,13 @@ abstract class MySQLTask extends AsyncTask {
 	 * @return \mysqli
 	 */
 	public function getMysqli() {
-		return $this->credentials->getMysqli();
+		$mysqli = $this->getFromThreadStore(self::ECONOMY_MYSQLI_KEY);
+		if($mysqli !== null){
+			return $mysqli;
+		}
+		$mysqli = $this->credentials->getMysqli();
+		$this->saveToThreadStore(self::ECONOMY_MYSQLI_KEY, $mysqli);
+		return $mysqli;
 	}
 
 	/**
